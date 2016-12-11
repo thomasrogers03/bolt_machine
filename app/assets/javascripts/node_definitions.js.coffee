@@ -5,8 +5,16 @@
 ready = ->
   if $('#node_definition_script').length > 0
     script_box = document.getElementById('node_definition_script')
-    code_mirror = CodeMirror.fromTextArea(script_box, {
+    CodeMirror.fromTextArea(script_box, {
       mode: 'ruby',
+      lineNumbers: true,
+      tabSize: 2,
+
+    })
+
+    meta_data_box = document.getElementById('node_definition_meta_data')
+    CodeMirror.fromTextArea(meta_data_box, {
+      mode: 'javascript',
       lineNumbers: true,
       tabSize: 2,
 

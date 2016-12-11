@@ -19,6 +19,6 @@ class NodeDefinitionsController < ApplicationController
   end
 
   def update_params
-    @update_params ||= params.require(:node_definition).permit(:name, :script)
+    @update_params ||= params.require(:node_definition).permit(:name, :script, :meta_data)
   end
 end
