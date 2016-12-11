@@ -7,10 +7,20 @@
       %a.tablinks{href: '#job-script', 'data-toggle' => 'tab'} Script
     %li
       %a.tablinks{href: '#job-graph', 'data-toggle' => 'tab'} Graph
+    %li
+      %a.tablinks{href: '#job-test', 'data-toggle' => 'tab'} Test
   .tab-content
     #job-script.tab-pane.fade.in.active
       = job_form.fields_for :job_script do |script_form|
-        = script_form.label :script
         = script_form.text_area :script
     #job-graph.tab-pane.fade
-      
+    #job-test.tab-pane.fade
+      %div
+        %label
+          Inputs
+        %textarea#job-test-variables
+          = "---\n"
+      %div
+        %label
+          Results
+        %textarea#job-test-result
