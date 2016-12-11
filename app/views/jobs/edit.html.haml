@@ -1,8 +1,7 @@
-= form_for @job, html: {onsubmit: 'return updateJob(event);'} do |job_form|
+= form_for @job, html: {onsubmit: 'return false;'} do |job_form|
   %div
     = job_form.label :job_name
     = job_form.text_field :job_name
-  = job_form.submit
   %ul.nav.nav-tabs
     %li.active
       %a.tablinks{href: '#job-script', 'data-toggle' => 'tab'} Script
@@ -14,4 +13,4 @@
         = script_form.label :script
         = script_form.text_area :script
     #job-graph.tab-pane.fade
-      %textarea#job-graph-text
+      

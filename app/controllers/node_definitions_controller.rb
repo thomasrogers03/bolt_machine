@@ -1,4 +1,6 @@
 class NodeDefinitionsController < ApplicationController
+  before_action { @title = 'Node Definition' }
+
   def index
     @node_definitions = NodeDefinition.all
   end

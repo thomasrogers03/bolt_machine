@@ -4,25 +4,24 @@
 
 ready = ->
   if $('#job_job_script_attributes_id').length > 0
+    $form = $('form.edit_job')
+    form_updated = ->
+      path = $form.attr('action')
+      $.ajax({url: path, type: 'PATCH', data: $form.serialize()}).success (response)->
+        console.log(response)
+      false
+
     script_box = document.getElementById('job_job_script_attributes_script')
     code_mirror = CodeMirror.fromTextArea(script_box, {
-      mode: 'ruby',
+      mode: 'yaml',
       lineNumbers: true,
-      tabSize: 2,
-
+      tabSize: 2
     })
 
-    $.get('/jobs/1/json').success (response)->
-      pretty_json = JSON.stringify(response, null, 2)
-      $('#job-graph-text').val(pretty_json)
+    code_mirror.on 'blur', ->
+      $('#job_job_script_attributes_script').val(code_mirror.getValue())
+      form_updated()
 
-    @updateJob = (event)->
-      $form = $('form.edit_job')
-      $.ajax({url: '/jobs/1', type: 'PATCH', data: $form.serialize()}).success (response)->
-        $.get('/jobs/1/json').success (response)->
-          pretty_json = JSON.stringify(response, null, 2)
-          $('#job-graph-text').val(pretty_json)
-      false
 
 $(document).ready(ready)
 $(document).on('page:load', ready)

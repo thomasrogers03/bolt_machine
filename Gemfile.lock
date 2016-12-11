@@ -1,10 +1,12 @@
-PATH
-  remote: ../behaviour-node-graph
+GIT
+  remote: git://github.com/thomasrogers03/behaviour_node_graph.git
+  revision: 9d5c334941f5f9f3950145cea7a798eeb9c0c49f
   specs:
     behaviour_node_graph (0.0.1)
 
-PATH
-  remote: ../thomas-utils
+GIT
+  remote: git://github.com/thomasrogers03/thomas_utils.git
+  revision: df36e9ed4face440020be4afa2515c0366ef1e9a
   specs:
     thomas_utils (0.2.17)
       concurrent-ruby (~> 1.0.0)
@@ -73,6 +75,7 @@ GEM
       railties (>= 3.0, < 5.0)
       thor (>= 0.14, < 2.0)
     json (1.8.3)
+    libv8 (3.16.14.15)
     lru_redux (1.1.0)
     mail (2.6.4)
       mime-types (>= 1.16, < 4)
@@ -104,6 +107,7 @@ GEM
       thor (>= 0.18.1, < 2.0)
     rake (12.0.0)
     rdoc (4.3.0)
+    ref (2.0.0)
     ruby_parser (3.7.2)
       sexp_processor (~> 4.1)
     sass (3.2.19)
@@ -127,12 +131,12 @@ GEM
       activesupport (>= 3.0)
       sprockets (>= 2.8, < 4.0)
     sqlite3 (1.3.12)
+    therubyracer (0.12.2)
+      libv8 (~> 3.16.14.0)
+      ref
     thor (0.19.4)
     thread_safe (0.3.5)
     tilt (1.4.1)
-    turbolinks (5.0.1)
-      turbolinks-source (~> 5)
-    turbolinks-source (5.0.0)
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
     uglifier (3.0.4)
@@ -155,9 +159,9 @@ DEPENDENCIES
   sdoc (~> 0.4.0)
   spring
   sqlite3
+  therubyracer
   thomas_utils!
-  turbolinks
   uglifier (>= 1.3.0)
 
 BUNDLED WITH
-   1.12.5
+   1.13.6

@@ -12,5 +12,14 @@ Job.transaction do
 
   Job.create!(job_name: 'Test Job', job_script_attributes: {script: ''})
 
-  NodeDefinition.create!(name: 'DebugNode', script: 'puts context.values.inspect')
+  NodeDefinition.create!(name: 'DebugNode', script: %q{puts "=> DEBUG: #{context.values.inspect}"}, meta_data: "---\n")
+  dummy_meta_data = %q{---
+inputs:
+	- source
+outputs:
+	- target
+properties:
+	- property
+}
+  NodeDefinition.create!(name: 'TestNode', script: 'context.values[target] = context.values[source]', meta_data: dummy_meta_data)
 end

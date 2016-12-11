@@ -1,4 +1,6 @@
 class JobsController < ApplicationController
+  before_action { @title = 'Jobs' }
+
   def index
     @jobs = Job.all
   end
@@ -10,18 +12,6 @@ class JobsController < ApplicationController
   def update
     job.update!(update_params)
     render json: job
-  end
-
-  def json_graph
-    klass_script = %Q{Class.new do
-      extend BehaviourNodeGraph
-      class << self
-        define_method(:graph) { {}.tap { |graph| #{job.job_script.script} } }
-      end
-    end}
-    klass = eval(klass_script)
-    graph = klass.graph
-    render json: graph
   end
 
   private

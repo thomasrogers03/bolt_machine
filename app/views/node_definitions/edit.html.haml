@@ -1,9 +1,7 @@
-= form_for @node_definition, html: {onsubmit: 'return updateNode();'} do |form|
+= form_for @node_definition, html: {onsubmit: 'return false;'} do |form|
   %div
     = form.label :name
     = form.text_field :name
-  %div
-    = form.submit
   %div
     = form.label :script
     = form.text_area :script

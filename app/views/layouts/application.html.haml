@@ -3,8 +3,20 @@
   %head
     %meta{:content => "text/html; charset=UTF-8", "http-equiv" => "Content-Type"}/
     %title BoltMachine
-    = stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true
-    = javascript_include_tag 'application', 'data-turbolinks-track' => true
+    = stylesheet_link_tag    'application', media: 'all'
+    = javascript_include_tag 'application'
     = csrf_meta_tags
   %body
-    = yield
+    .container
+      %nav.navbar.navbar-inverse.navbar-fixed-top
+        .container
+          .navbar-brand
+            Bolt Machine
+          %ul.nav.navbar-nav
+            %li{class: current_page?(jobs_path) ? 'active' : ''}
+              = link_to 'Jobs', jobs_path
+            %li{class: current_page?(node_definitions_path) ? 'active' : ''}
+              = link_to 'Node Definitions', node_definitions_path
+      #main_content
+        %h2= @title
+        = yield
