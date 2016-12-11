@@ -1,0 +1,12 @@
+// Place all the styles related to the Jobs controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+
+form.edit_job textarea {
+  width: 100%;
+  min-height: 100em;
+}
+
+form.edit_node_definition textarea {
+  width: 100%;
+}

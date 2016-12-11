@@ -1,0 +1,2 @@
+module NodeDefinitionsHelper
+end

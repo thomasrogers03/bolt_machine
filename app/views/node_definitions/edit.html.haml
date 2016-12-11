@@ -1,0 +1,12 @@
+= form_for @node_definition, html: {onsubmit: 'return updateNode();'} do |form|
+  %div
+    = form.label :name
+    = form.text_field :name
+  %div
+    = form.submit
+  %div
+    = form.label :script
+    = form.text_area :script
+  %div
+    = form.label :meta_data
+    = form.text_area :meta_data
