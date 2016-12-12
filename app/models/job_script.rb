@@ -26,6 +26,10 @@ class JobScript < ActiveRecord::Base
                  else
                    "BehaviourNodeGraph::#{definition[:type]}".constantize
                  end
-    node_klass.new_node
+    input_values = node_klass.inputs.map { |name| definition[:inputs][name] }
+    output_values = node_klass.outputs.map { |name| definition[:outputs][name] }
+    output_node_values = node_klass.output_nodes.map { |name| definition[:output_nodes][name] }
+    property_values = node_klass.properties.map { |name, _| definition[:properties][name] }
+    node_klass.new_node(*input_values, *output_values, *output_node_values, *property_values)
   end
 end

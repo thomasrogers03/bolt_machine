@@ -1,10 +1,17 @@
 class NodeDefinition < ActiveRecord::Base
   def node_klass
-    @node_klass ||= eval(node_klass_script)
+    @node_klass ||= begin
+      eval(node_klass_script).tap do |klass|
+        klass.inputs = inputs
+        klass.outputs = outputs
+        klass.output_nodes = []
+        klass.properties = properties
+      end
+    end
   end
 
   def node_klass_script
-    @node_klass_script ||= %Q{BehaviourNodeGraph.define_simple_node(#{node_klass_params}) do
+    @node_klass_script ||= %Q{klass = BehaviourNodeGraph.define_simple_node(#{node_klass_params}) do
   #{script}
 end}
   end
