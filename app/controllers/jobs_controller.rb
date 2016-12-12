@@ -14,7 +14,17 @@ class JobsController < ApplicationController
     render json: job
   end
 
+  def execute
+    context = BehaviourNodeGraph.context.new
+    context.values.merge!(execution_values)
+    job.job_script.run(context)
+  end
+
   private
+
+  def execution_values
+    YAML.load(params[:execution_values])
+  end
 
   def job
     @job ||= Job.find(params[:id])
