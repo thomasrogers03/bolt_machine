@@ -1,2 +1,22 @@
-- @node_definitions.each do |node_definition|
-  = link_to node_definition.name, edit_node_definition_path(node_definition)
+%table.table.table-striped.table-bordered
+  %thead
+    %tr
+      %th
+        Node
+      %th
+        Inputs
+      %th
+        Outputs
+      %th
+        Properties
+  %tbody
+    - @node_definitions.each do |node_definition|
+      %tr
+        %td
+          = link_to node_definition.name, edit_node_definition_path(node_definition)
+        %td
+          = node_definition.inputs * ', '
+        %td
+          = node_definition.outputs * ', '
+        %td
+          = node_definition.properties.map { |name, type| "[#{type}] name" } * ', '

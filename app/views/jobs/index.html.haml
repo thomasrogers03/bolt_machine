@@ -1,2 +1,14 @@
-- @jobs.each do |job|
-  = link_to job.job_name, edit_job_path(job)
+%table.table.table-striped.table-bordered
+  %thead
+    %tr
+      %th
+        Job
+      %th
+        Cron
+  %tbody
+    - @jobs.each do |job|
+      %tr
+        %td
+          = link_to job.job_name, edit_job_path(job)
+        %td
+          = job.cron.presence || 'Run Once'
