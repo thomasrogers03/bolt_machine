@@ -30,7 +30,11 @@ ready = ->
     })
 
     test_variable_code.on 'blur', ->
-      $('#job-test-variables').val(test_variable_code.getValue())
+      input_values = test_variable_code.getValue()
+      $('#job-test-variables').val(input_values)
+      path = $execute_form.attr('action')
+      $.post(path, {execution_values: input_values}).success (response)->
+        console.log(response)
 
     test_result_box = document.getElementById('job-test-result')
     test_result_code = CodeMirror.fromTextArea(test_result_box, {
@@ -40,6 +44,7 @@ ready = ->
       readOnly: true
     })
 
+    $execute_form = $('form.execute_job')
     test_result_code.on 'blur', ->
       $('#job-test-variables').val(test_result_code.getValue())
 

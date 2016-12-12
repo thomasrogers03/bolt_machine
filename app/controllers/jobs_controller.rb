@@ -15,9 +15,10 @@ class JobsController < ApplicationController
   end
 
   def execute
-    context = BehaviourNodeGraph.context.new
+    context = BehaviourNodeGraph::Context.new
     context.values.merge!(execution_values)
     job.job_script.run(context)
+    render json: context.values
   end
 
   private

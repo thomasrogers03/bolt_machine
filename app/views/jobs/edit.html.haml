@@ -1,3 +1,5 @@
+= form_for @job, url: execute_job_path, html: {id: "execute_job_#{@job.id}", class: 'execute_job', style: 'display: none;'} do
+  -
 = form_for @job, html: {onsubmit: 'return false;'} do |job_form|
   %div
     = job_form.label :job_name
