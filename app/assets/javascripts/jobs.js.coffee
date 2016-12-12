@@ -29,11 +29,14 @@ ready = ->
       tabSize: 2
     })
 
+    $execute_form = $('form.execute_job')
     test_variable_code.on 'blur', ->
       input_values = test_variable_code.getValue()
       $('#job-test-variables').val(input_values)
       path = $execute_form.attr('action')
       $.post(path, {execution_values: input_values}).success (response)->
+        $('#job-test-variables').val(response)
+        test_result_code.refresh()
         console.log(response)
 
     test_result_box = document.getElementById('job-test-result')
@@ -44,7 +47,6 @@ ready = ->
       readOnly: true
     })
 
-    $execute_form = $('form.execute_job')
     test_result_code.on 'blur', ->
       $('#job-test-variables').val(test_result_code.getValue())
 

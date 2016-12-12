@@ -24,7 +24,7 @@ class JobsController < ApplicationController
   private
 
   def execution_values
-    YAML.load(params[:execution_values])
+    @execution_values ||= YAML.load(params[:execution_values]) || {}
   end
 
   def job
