@@ -2,9 +2,7 @@ class JobScript < ActiveRecord::Base
   belongs_to :job, inverse_of: :job_script
 
   def run(context)
-    node = create_node_graph
-    node.context = context
-    node.act
+    BehaviourNodeGraph::ImmediateExecutor.new(context).execute([create_node_graph])
   end
 
   def create_node_graph
