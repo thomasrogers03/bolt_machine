@@ -15,10 +15,15 @@ class JobsController < ApplicationController
   end
 
   def execute
-    context = BehaviourNodeGraph::Context.new
-    context.values.merge!(execution_values)
-    job.job_script.run(context)
-    render text: YAML.dump(context.values)
+    result = begin
+      context = BehaviourNodeGraph::Context.new
+      context.values.merge!(execution_values)
+      job.job_script.run(context)
+      context.values
+    rescue Exception => error
+      {error: {type: error.class.to_s.demodulize, message: error.message, backtrace: error.backtrace}}
+    end
+    render text: YAML.dump(result)
   end
 
   private
