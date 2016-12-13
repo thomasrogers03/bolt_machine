@@ -34,15 +34,20 @@ ready = ->
       input_values = test_variable_code.getValue()
       $('#job-test-variables').val(input_values)
       path = $execute_form.attr('action')
+
+      $run_job_button = $('#run-test-job')
+      $run_job_button.prop('disabled', true)
       $.post(path, {execution_values: input_values}).success (response)->
         $('#job-test-result').val(response)
         test_result_code.setValue(response)
         console.log(response)
+        $run_job_button.prop('disabled', false)
       .error ->
         response = 'Job unable to run!'
         $('#job-test-result').val(response)
         test_result_code.setValue(response)
         console.log(response)
+        $run_job_button.prop('disabled', false)
       false
 
 
