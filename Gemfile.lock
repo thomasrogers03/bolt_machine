@@ -119,6 +119,7 @@ GEM
       json (~> 1.7, >= 1.7.7)
       rdoc (~> 4.0)
     sexp_processor (4.6.0)
+    snappy (0.0.15)
     sprockets (2.12.4)
       hike (~> 1.2)
       multi_json (~> 1.0)
@@ -155,6 +156,7 @@ DEPENDENCIES
   rails (= 4.1.6)
   sass-rails (~> 4.0.3)
   sdoc (~> 0.4.0)
+  snappy
   sqlite3
   therubyracer
   thomas_utils!

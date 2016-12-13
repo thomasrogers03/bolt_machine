@@ -41,6 +41,7 @@ gem 'sdoc', '~> 0.4.0',          group: :doc
 gem 'haml-rails'
 gem 'concurrent-ruby', require: false
 gem 'lru_redux', require: false
+gem 'snappy'
 
 gem 'thomas_utils', github: 'thomasrogers03/thomas_utils'
 #gem 'behaviour_node_graph', github: 'thomasrogers03/behaviour_node_graph'
