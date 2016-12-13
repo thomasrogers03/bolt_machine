@@ -5,29 +5,13 @@
 ready = ->
   if $('#job_job_script_attributes_id').length > 0
     $form = $('form.edit_job')
-    form_updated = ->
-      path = $form.attr('action')
-      $.ajax({url: path, type: 'PATCH', data: $form.serialize()}).success (response)->
-        console.log(response)
-      false
+    form_updated = autoSaveForm($form, 'PATCH')
 
     script_box = document.getElementById('job_job_script_attributes_script')
-    code_mirror = CodeMirror.fromTextArea(script_box, {
-      mode: 'yaml',
-      lineNumbers: true,
-      tabSize: 2
-    })
-
-    code_mirror.on 'blur', ->
-      $('#job_job_script_attributes_script').val(code_mirror.getValue())
-      form_updated()
+    code_mirror = createCodeMirror(script_box, 'yaml', form_updated)
 
     test_variable_box = document.getElementById('job-test-variables')
-    test_variable_code = CodeMirror.fromTextArea(test_variable_box, {
-      mode: 'yaml',
-      lineNumbers: true,
-      tabSize: 2
-    })
+    test_variable_code = createCodeMirror(test_variable_box, 'yaml', null)
 
     $execute_form = $('form.execute_job')
     @executeJobTest = ->
@@ -52,12 +36,8 @@ ready = ->
 
 
     test_result_box = document.getElementById('job-test-result')
-    test_result_code = CodeMirror.fromTextArea(test_result_box, {
-      mode: 'yaml',
-      lineNumbers: true,
-      tabSize: 2,
-      readOnly: true
-    })
+    test_result_code = createCodeMirror(test_result_box, 'yaml', null)
+    test_result_code.setOption("readOnly", true)
 
     $('a[data-toggle="tab"]').on 'shown.bs.tab', ->
       code_mirror.refresh()
