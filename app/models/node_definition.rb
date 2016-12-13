@@ -29,7 +29,7 @@ end}
   end
 
   def properties
-    @properties ||= variable_meta_data[:properties] || []
+    @properties ||= variable_meta_data[:properties] || {}
   end
 
   def variable_meta_data
