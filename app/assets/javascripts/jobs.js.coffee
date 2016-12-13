@@ -30,7 +30,7 @@ ready = ->
     })
 
     $execute_form = $('form.execute_job')
-    test_variable_code.on 'blur', ->
+    @executeJobTest = ->
       input_values = test_variable_code.getValue()
       $('#job-test-variables').val(input_values)
       path = $execute_form.attr('action')
@@ -43,6 +43,7 @@ ready = ->
         $('#job-test-result').val(response)
         test_result_code.setValue(response)
         console.log(response)
+      false
 
 
     test_result_box = document.getElementById('job-test-result')
@@ -52,9 +53,6 @@ ready = ->
       tabSize: 2,
       readOnly: true
     })
-
-    test_result_code.on 'blur', ->
-      $('#job-test-result').val(test_result_code.getValue())
 
     $('a[data-toggle="tab"]').on 'shown.bs.tab', ->
       code_mirror.refresh()
