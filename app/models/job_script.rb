@@ -1,6 +1,10 @@
 class JobScript < ActiveRecord::Base
   belongs_to :job, inverse_of: :job_script
 
+  def job_script_as_json
+    definition.as_json
+  end
+
   def run(context)
     BehaviourNodeGraph::ImmediateExecutor.new(context).execute([create_node_graph])
   end

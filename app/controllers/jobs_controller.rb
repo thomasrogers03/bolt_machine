@@ -26,6 +26,10 @@ class JobsController < ApplicationController
     render text: YAML.dump(result)
   end
 
+  def script_json
+    render json: job.job_script.job_script_as_json
+  end
+
   private
 
   def execution_values
