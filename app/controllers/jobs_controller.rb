@@ -18,7 +18,7 @@ class JobsController < ApplicationController
     context = BehaviourNodeGraph::Context.new
     context.values.merge!(execution_values)
     job.job_script.run(context)
-    render json: context.values
+    render text: YAML.dump(context.values)
   end
 
   private
