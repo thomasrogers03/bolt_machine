@@ -38,6 +38,12 @@ ready = ->
         $('#job-test-result').val(response)
         test_result_code.setValue(response)
         console.log(response)
+      .error ->
+        response = 'Job unable to run!'
+        $('#job-test-result').val(response)
+        test_result_code.setValue(response)
+        console.log(response)
+
 
     test_result_box = document.getElementById('job-test-result')
     test_result_code = CodeMirror.fromTextArea(test_result_box, {
