@@ -1,16 +1,15 @@
 GIT
-  remote: git://github.com/thomasrogers03/behaviour_node_graph.git
-  revision: 9d5c334941f5f9f3950145cea7a798eeb9c0c49f
-  specs:
-    behaviour_node_graph (0.0.1)
-
-GIT
   remote: git://github.com/thomasrogers03/thomas_utils.git
   revision: df36e9ed4face440020be4afa2515c0366ef1e9a
   specs:
     thomas_utils (0.2.17)
       concurrent-ruby (~> 1.0.0)
       workers (~> 0.3)
+
+PATH
+  remote: ../behaviour_node_graph
+  specs:
+    behaviour_node_graph (0.0.1)
 
 GEM
   remote: https://rubygems.org/
@@ -120,7 +119,6 @@ GEM
       json (~> 1.7, >= 1.7.7)
       rdoc (~> 4.0)
     sexp_processor (4.6.0)
-    spring (1.7.2)
     sprockets (2.12.4)
       hike (~> 1.2)
       multi_json (~> 1.0)
@@ -157,7 +155,6 @@ DEPENDENCIES
   rails (= 4.1.6)
   sass-rails (~> 4.0.3)
   sdoc (~> 0.4.0)
-  spring
   sqlite3
   therubyracer
   thomas_utils!
