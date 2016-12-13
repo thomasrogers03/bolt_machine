@@ -4,9 +4,17 @@
 
 form.edit_job textarea {
   width: 100%;
-  min-height: 100em;
 }
 
 form.edit_node_definition textarea {
   width: 100%;
+}
+
+.CodeMirror {
+  border: 1px solid #eee;
+  height: auto;
+}
+
+.CodeMirror-scroll {
+  min-height: 10em;
 }
