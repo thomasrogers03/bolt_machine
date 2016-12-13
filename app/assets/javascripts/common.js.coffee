@@ -10,11 +10,13 @@
       on_updated()
   code_mirror
 
-@autoSaveForm = ($form, method)->
+@autoSaveForm = ($form, method, callback)->
   form_updated = ->
     path = $form.attr('action')
     $.ajax({url: path, type: method, data: $form.serialize()}).success (response)->
       console.log(response)
+      if callback
+        callback()
     false
   $form.find(':input').change(form_updated)
   form_updated

@@ -5,7 +5,12 @@
 ready = ->
   if $('#job_job_script_attributes_id').length > 0
     $form = $('form.edit_job')
-    form_updated = autoSaveForm($form, 'PATCH')
+    job_id = $('#job-meta-data').data('job-id')
+    job_script_data = $('#job-meta-data').data('job-script-json')
+    form_updated = autoSaveForm $form, 'PATCH', ->
+      $.get('/jobs/' + job_id + '/script/json').success (response)->
+        job_script_data = response
+        $('#job-meta-data').data('job-script-json', job_script_data)
 
     script_box = document.getElementById('job_job_script_attributes_script')
     code_mirror = createCodeMirror(script_box, 'yaml', form_updated)
