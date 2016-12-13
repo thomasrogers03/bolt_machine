@@ -13,4 +13,5 @@
 //= require jquery
 //= require jquery_ujs
 //= require vendor
+//= require common
 //= require_tree .
