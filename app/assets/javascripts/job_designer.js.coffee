@@ -83,7 +83,7 @@ joint.shapes.NodeShape = joint.shapes.devs.Model.extend({
   paper = new joint.dia.Paper({
     el: $paper_element,
     width: '100%',
-    height: 400,
+    height: 800,
     model: graph,
     gridSize: 1,
     defaultLink: new joint.dia.Link({
