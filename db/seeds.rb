@@ -86,7 +86,7 @@ properties:
   visit_page_meta_data = %q{---
 outputs:
   - page_content
-:inputs:
+inputs:
   - url
 }
   NodeDefinition.create!(name: 'VisitPage', script: 'context.values[page_content] = URI.parse(context.values[url]).open.read', meta_data: visit_page_meta_data)
