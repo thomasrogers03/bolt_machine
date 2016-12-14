@@ -124,7 +124,7 @@ joint.shapes.NodeShape = joint.shapes.devs.Model.extend({
 
     node = new joint.shapes.NodeShape({
       node_type: node_descriptor.type,
-      node_name: name,
+      id: name,
       properties: {},
       position: { x: x, y: y },
       inPorts: [],

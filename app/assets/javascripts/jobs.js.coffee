@@ -14,7 +14,7 @@ ready = ->
 
     node_graph_updated = (graph)->
       $.each graph.getElements(), (index, element)->
-        node_name = element.get('node_name')
+        node_name = element.get('id')
         node_descriptor = job_script_data.nodes[node_name]
 
         position = element.get('position')
