@@ -121,18 +121,36 @@ joint.shapes.NodeShape = joint.shapes.devs.Model.extend({
       node_descriptor.y
     else
       30
-
     node = new joint.shapes.NodeShape({
       node_type: node_descriptor.type,
       id: name,
       properties: {},
       position: { x: x, y: y },
-      inPorts: [],
-      outPorts: [],
+      inPorts: ['in'],
+      outPorts: ['next_nodes'],
       attrs: { text: { text: name } }
     })
-
     graph.addCell(node)
+
+  $.each job_script_data.nodes, (name, node_descriptor)->
+    if node_descriptor.next_nodes
+      $.each node_descriptor.next_nodes, (index, target_name)->
+        link = new joint.shapes.pn.Link({
+          smooth: true,
+          source: {
+            id: name,
+            port: 'next_nodes'
+          },
+          target: {
+            id: target_name,
+            port: 'in'
+          }
+          attrs: {
+            '.connection' : { stroke: 'black' },
+            '.marker-target': { d: 'M 10 0 L 0 5 L 10 10 z' }
+          }
+        });
+        graph.addCell(link)
 
   interval = setInterval(->
     if on_updated && $paper_element.is(':visible')

@@ -18,3 +18,15 @@ form.edit_node_definition textarea {
 .CodeMirror-scroll {
   min-height: 10em;
 }
+
+.connection-wrap, .connection {
+  fill: none;
+}
+
+.available-magnet {
+  fill: yellow;
+}
+
+.available-cell rect {
+  stroke-dasharray: 5, 2;
+}
