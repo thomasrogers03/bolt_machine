@@ -70,6 +70,12 @@ joint.shapes.NodeShape = joint.shapes.devs.Model.extend({
   }, joint.shapes.devs.Model.prototype.defaults)
 })
 
+@clearJobNodeGraph = (designer_tab, node_graph)->
+  node_graph.graph.clear()
+  node_graph.paper.remove()
+  clearInterval(node_graph.interval)
+  $(designer_tab).prepend('<div id="job-designer" />')
+
 @createJobNodeGraph = (paper_element, job_script_data, on_updated)->
   $paper_element = $(paper_element)
   graph = new joint.dia.Graph

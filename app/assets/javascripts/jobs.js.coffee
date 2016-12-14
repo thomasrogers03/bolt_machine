@@ -63,10 +63,7 @@ ready = ->
       test_variable_code.refresh()
       test_result_code.refresh()
       if $('#job-designer-tab').is(':visible')
-        node_graph.graph.clear()
-        node_graph.paper.remove()
-        clearInterval(node_graph.interval)
-        $('#job-designer-tab').append('<div id="job-designer" />')
+        clearJobNodeGraph('#job-designer-tab', node_graph)
         node_graph = createJobNodeGraph('#job-designer', job_script_data, node_graph_updated)
 
 
