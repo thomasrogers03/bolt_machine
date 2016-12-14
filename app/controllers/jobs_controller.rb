@@ -30,6 +30,11 @@ class JobsController < ApplicationController
     render json: job.job_script.job_script_as_json
   end
 
+  def json_to_yaml
+    json = JSON.parse(params[:json]).deep_symbolize_keys
+    render text: YAML.dump(json)
+  end
+
   private
 
   def execution_values

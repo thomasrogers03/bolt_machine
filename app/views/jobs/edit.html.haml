@@ -7,14 +7,14 @@
     = job_form.text_field :job_name
   %ul.nav.nav-tabs
     %li.active
-      %a.tablinks{href: '#job-designer', 'data-toggle' => 'tab'} Designer
+      %a.tablinks{href: '#job-designer-tab', 'data-toggle' => 'tab'} Designer
     %li
       %a.tablinks{href: '#job-script', 'data-toggle' => 'tab'} Script
     %li
       %a.tablinks{href: '#job-test', 'data-toggle' => 'tab'} Test
   .tab-content
-    #job-designer.tab-pane.fade.in.active
-      %canvas#job-designer
+    #job-designer-tab.tab-pane.fade.in.active
+      #job-designer
     #job-script.tab-pane.fade
       = job_form.fields_for :job_script do |script_form|
         = script_form.text_area :script

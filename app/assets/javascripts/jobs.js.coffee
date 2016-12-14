@@ -44,6 +44,21 @@ ready = ->
     test_result_code = createCodeMirror(test_result_box, 'yaml', null)
     test_result_code.setOption("readOnly", true)
 
+    node_graph = node_graph_updated = (graph)->
+      $.each graph.getElements(), (index, element)->
+        node_name = element.get('node_name')
+        node_descriptor = job_script_data.nodes[node_name]
+
+        position = element.get('position')
+        node_descriptor.x = position.x
+        node_descriptor.y = position.y
+      $.get('/jobs/json_to_yaml', {json: JSON.stringify(job_script_data)}).success (response)->
+        code_mirror.setValue(response)
+        $(script_box).val(response)
+        form_updated()
+
+    createJobNodeGraph('#job-designer', job_script_data, node_graph_updated)
+
     $('a[data-toggle="tab"]').on 'shown.bs.tab', ->
       code_mirror.refresh()
       test_variable_code.refresh()
