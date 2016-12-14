@@ -104,6 +104,14 @@ joint.shapes.NodeShape = joint.shapes.devs.Model.extend({
         return false
       magnetS != magnetT
     validateMagnet: (cellView, magnet)->
+      node_name = cellView.model.get('id')
+      if node_name == 'root'
+        port = magnet.getAttribute('port')
+        links = graph.getConnectedLinks(cellView.model, { outbound: true })
+        portLinks = _.filter links, (link)->
+          link.get('source').port == port
+        if portLinks.length > 0
+          return false
       magnet.getAttribute('magnet') != 'passive'
 
     snapLinks: { radius: 25 },
@@ -111,6 +119,15 @@ joint.shapes.NodeShape = joint.shapes.devs.Model.extend({
     linkPinning: false,
     multiLinks: false
   })
+
+  root_node = new joint.shapes.NodeShape({
+    id: 'root',
+    position: { x: 50, y: 50 },
+    inPorts: [],
+    outPorts: ['next_nodes'],
+    attrs: { text: { text: 'Root' } }
+  })
+  graph.addCell(root_node)
 
   $.each job_script_data.nodes, (name, node_descriptor)->
     x = if node_descriptor.x
@@ -132,25 +149,29 @@ joint.shapes.NodeShape = joint.shapes.devs.Model.extend({
     })
     graph.addCell(node)
 
+  createLink = (source, target)->
+    link = new joint.shapes.pn.Link({
+      smooth: true,
+      source: {
+        id: source,
+        port: 'next_nodes'
+      },
+      target: {
+        id: target,
+        port: 'in'
+      }
+      attrs: {
+        '.connection' : { stroke: 'black' },
+        '.marker-target': { d: 'M 10 0 L 0 5 L 10 10 z' }
+      }
+    });
+    graph.addCell(link)
+
+  createLink('root', job_script_data.root)
   $.each job_script_data.nodes, (name, node_descriptor)->
     if node_descriptor.next_nodes
       $.each node_descriptor.next_nodes, (index, target_name)->
-        link = new joint.shapes.pn.Link({
-          smooth: true,
-          source: {
-            id: name,
-            port: 'next_nodes'
-          },
-          target: {
-            id: target_name,
-            port: 'in'
-          }
-          attrs: {
-            '.connection' : { stroke: 'black' },
-            '.marker-target': { d: 'M 10 0 L 0 5 L 10 10 z' }
-          }
-        });
-        graph.addCell(link)
+        createLink(name, target_name)
 
   interval = setInterval(->
     if on_updated && $paper_element.is(':visible')

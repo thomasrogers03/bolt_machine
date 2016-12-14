@@ -15,19 +15,22 @@ ready = ->
     node_graph_updated = (graph)->
       $.each graph.getElements(), (index, element)->
         node_name = element.get('id')
-        node_descriptor = job_script_data.nodes[node_name]
+        if node_name != 'root'
+          node_descriptor = job_script_data.nodes[node_name]
 
-        position = element.get('position')
-        node_descriptor.x = position.x
-        node_descriptor.y = position.y
-        node_descriptor.next_nodes = []
+          position = element.get('position')
+          node_descriptor.x = position.x
+          node_descriptor.y = position.y
+          node_descriptor.next_nodes = []
 
       $.each graph.getLinks(), (index, link)->
         node_name = link.get('source').id
-        node_descriptor = job_script_data.nodes[node_name]
-
         target_node_name = link.get('target').id
-        node_descriptor.next_nodes.push(target_node_name)
+        if node_name == 'root'
+          job_script_data.root = target_node_name
+        else
+          node_descriptor = job_script_data.nodes[node_name]
+          node_descriptor.next_nodes.push(target_node_name)
 
       $.get('/jobs/json_to_yaml', {json: JSON.stringify(job_script_data)}).success (response)->
         code_mirror.setValue(response)
@@ -53,13 +56,11 @@ ready = ->
       $.post(path, {execution_values: input_values}).success (response)->
         $('#job-test-result').val(response)
         test_result_code.setValue(response)
-        console.log(response)
         $run_job_button.prop('disabled', false)
       .error ->
         response = 'Job unable to run!'
         $('#job-test-result').val(response)
         test_result_code.setValue(response)
-        console.log(response)
         $run_job_button.prop('disabled', false)
       false
 
