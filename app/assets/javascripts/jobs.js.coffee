@@ -20,6 +20,15 @@ ready = ->
         position = element.get('position')
         node_descriptor.x = position.x
         node_descriptor.y = position.y
+        node_descriptor.next_nodes = []
+
+      $.each graph.getLinks(), (index, link)->
+        node_name = link.get('source').id
+        node_descriptor = job_script_data.nodes[node_name]
+
+        target_node_name = link.get('target').id
+        node_descriptor.next_nodes.push(target_node_name)
+
       $.get('/jobs/json_to_yaml', {json: JSON.stringify(job_script_data)}).success (response)->
         code_mirror.setValue(response)
         $(script_box).val(response)

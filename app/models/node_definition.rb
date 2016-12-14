@@ -21,15 +21,15 @@ end}
   end
 
   def inputs
-    @inputs ||= variable_meta_data[:inputs] || []
+    @inputs ||= variable_meta_data['inputs'] || []
   end
 
   def outputs
-    @outputs ||= variable_meta_data[:outputs] || []
+    @outputs ||= variable_meta_data['outputs'] || []
   end
 
   def properties
-    @properties ||= variable_meta_data[:properties] || {}
+    @properties ||= variable_meta_data['properties'] || {}
   end
 
   def variable_meta_data

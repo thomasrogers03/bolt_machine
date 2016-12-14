@@ -31,7 +31,7 @@ class JobsController < ApplicationController
   end
 
   def json_to_yaml
-    json = JSON.parse(params[:json]).deep_symbolize_keys
+    json = JSON.parse(params[:json])
     render text: YAML.dump(json)
   end
 
