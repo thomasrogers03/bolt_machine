@@ -21,15 +21,15 @@ end}
   end
 
   def inputs
-    @inputs ||= variable_meta_data['inputs'] || []
+    @inputs ||= (variable_meta_data['inputs'] || []).map(&:to_sym)
   end
 
   def outputs
-    @outputs ||= variable_meta_data['outputs'] || []
+    @outputs ||= (variable_meta_data['outputs'] || []).map(&:to_sym)
   end
 
   def properties
-    @properties ||= variable_meta_data['properties'] || {}
+    @properties ||= (variable_meta_data['properties'] || {}).symbolize_keys
   end
 
   def variable_meta_data
