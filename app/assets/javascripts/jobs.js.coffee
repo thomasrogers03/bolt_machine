@@ -12,8 +12,23 @@ ready = ->
         job_script_data = response
         $('#job-meta-data').data('job-script-json', job_script_data)
 
+    node_graph_updated = (graph)->
+      $.each graph.getElements(), (index, element)->
+        node_name = element.get('node_name')
+        node_descriptor = job_script_data.nodes[node_name]
+
+        position = element.get('position')
+        node_descriptor.x = position.x
+        node_descriptor.y = position.y
+      $.get('/jobs/json_to_yaml', {json: JSON.stringify(job_script_data)}).success (response)->
+        code_mirror.setValue(response)
+        $(script_box).val(response)
+        form_updated()
+    node_graph = createJobNodeGraph('#job-designer', job_script_data, node_graph_updated)
+
     script_box = document.getElementById('job_job_script_attributes_script')
-    code_mirror = createCodeMirror(script_box, 'yaml', form_updated)
+    code_mirror = createCodeMirror script_box, 'yaml', ->
+      form_updated()
 
     test_variable_box = document.getElementById('job-test-variables')
     test_variable_code = createCodeMirror(test_variable_box, 'yaml', null)
@@ -39,30 +54,20 @@ ready = ->
         $run_job_button.prop('disabled', false)
       false
 
-
     test_result_box = document.getElementById('job-test-result')
     test_result_code = createCodeMirror(test_result_box, 'yaml', null)
     test_result_code.setOption("readOnly", true)
-
-    node_graph = node_graph_updated = (graph)->
-      $.each graph.getElements(), (index, element)->
-        node_name = element.get('node_name')
-        node_descriptor = job_script_data.nodes[node_name]
-
-        position = element.get('position')
-        node_descriptor.x = position.x
-        node_descriptor.y = position.y
-      $.get('/jobs/json_to_yaml', {json: JSON.stringify(job_script_data)}).success (response)->
-        code_mirror.setValue(response)
-        $(script_box).val(response)
-        form_updated()
-
-    createJobNodeGraph('#job-designer', job_script_data, node_graph_updated)
 
     $('a[data-toggle="tab"]').on 'shown.bs.tab', ->
       code_mirror.refresh()
       test_variable_code.refresh()
       test_result_code.refresh()
+      if $('#job-designer-tab').is(':visible')
+        node_graph.graph.clear()
+        node_graph.paper.remove()
+        clearInterval(node_graph.interval)
+        $('#job-designer-tab').append('<div id="job-designer" />')
+        node_graph = createJobNodeGraph('#job-designer', job_script_data, node_graph_updated)
 
 
 $(document).ready(ready)

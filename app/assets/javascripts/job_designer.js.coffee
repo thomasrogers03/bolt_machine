@@ -128,9 +128,9 @@ joint.shapes.NodeShape = joint.shapes.devs.Model.extend({
 
     graph.addCell(node)
 
-  setInterval(->
+  interval = setInterval(->
     if on_updated && $paper_element.is(':visible')
       on_updated(graph)
   1500)
 
-  {graph: graph, paper: paper}
+  {graph: graph, paper: paper, interval: interval}
