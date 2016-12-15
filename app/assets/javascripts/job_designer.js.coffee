@@ -14,9 +14,11 @@ joint.shapes.NodeShape = joint.shapes.devs.Model.extend({
           attrs: {
             '.port-label': {
               'font-size': 8,
+              x: -6
             },
             '.port-body': {
               fill: '#16A085',
+              x: -10,
               width: 10,
               height: 10
             }
@@ -38,7 +40,7 @@ joint.shapes.NodeShape = joint.shapes.devs.Model.extend({
             },
             '.port-body': {
               fill: '#E74C3C'
-              x: -10,
+              x: 0,
               width: 10,
               height: 10,
             }
@@ -47,7 +49,7 @@ joint.shapes.NodeShape = joint.shapes.devs.Model.extend({
             position: {
               name: 'left',
               args: {
-                x: -12
+                x: -6,
                 y: 4
               }
             }
@@ -161,8 +163,8 @@ joint.shapes.NodeShape = joint.shapes.devs.Model.extend({
         port: 'in'
       }
       attrs: {
-        '.connection' : { stroke: 'black' },
-        '.marker-target': { d: 'M 10 0 L 0 5 L 10 10 z' }
+        '.connection' : { stroke: 'black', 'stroke-width': '2' },
+        '.marker-target': { d: 'M 10 0 L 0 5 L 10 10 z', 'stroke-width': '3' }
       }
     });
     graph.addCell(link)
