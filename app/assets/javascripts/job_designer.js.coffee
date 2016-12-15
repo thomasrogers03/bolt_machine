@@ -5,7 +5,7 @@ joint.shapes.NodeShape = joint.shapes.devs.Model.extend({
   defaults: joint.util.deepSupplement({
     type: 'NodeShape'
     size: {
-      width: 100,
+      width: 200,
       height: 100
     }
     ports: {
@@ -13,7 +13,8 @@ joint.shapes.NodeShape = joint.shapes.devs.Model.extend({
         'in': {
           attrs: {
             '.port-label': {
-              'font-size': 8,
+              'font-size': 12,
+              'font-weight': 'bold',
               x: -6
             },
             '.port-body': {
@@ -36,7 +37,8 @@ joint.shapes.NodeShape = joint.shapes.devs.Model.extend({
         'out': {
           attrs: {
             '.port-label': {
-              'font-size': 8
+              'font-size': 12,
+              'font-weight': 'bold'
             },
             '.port-body': {
               fill: '#E74C3C'
@@ -59,11 +61,13 @@ joint.shapes.NodeShape = joint.shapes.devs.Model.extend({
     },
     attrs: {
       '.title': {
-        fill: 'red', rx: 5, ry: 5, width: 100, height: 20, y: -20
+        fill: 'red', rx: 5, ry: 5, width: 200, height: 20, y: -20
       }
       '.body': {
         rx: 5, ry: 5,
-        fill: 'blue'
+        fill: '#00000000',
+        stroke: '#B95BAE',
+        'stroke-width': '2',
       },
       '.label': {
         y: 5, fill: 'white', y: -15
