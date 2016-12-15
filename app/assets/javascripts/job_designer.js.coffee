@@ -70,7 +70,48 @@ joint.shapes.NodeShape = joint.shapes.devs.Model.extend({
         'stroke-width': '2',
       },
       '.label': {
-        y: 5, fill: 'white', y: -15
+        fill: 'white', y: -15
+      }
+    }
+  }, joint.shapes.devs.Model.prototype.defaults)
+})
+
+joint.shapes.VariableShape = joint.shapes.devs.Model.extend({
+  markup: '<g class="rotatable"><g class="scalable"><circle class="body"/></g><text class="label"/></g>',
+  portMarkup: '<rect class="port-body"/>',
+
+  defaults: joint.util.deepSupplement({
+    type: 'VariableShape'
+    size: {
+      width: 60,
+      height: 60
+    }
+    ports: {
+      groups: {
+        'in': {
+          attrs: {
+            '.port-body': {
+              fill: '#16A085',
+              x: 25,
+              y: -40,
+              width: 10,
+              height: 10
+            }
+          }
+        }
+      }
+    },
+    attrs: {
+      '.body': {
+        fill: '#00000000',
+        stroke: '#B95BAE',
+        'stroke-width': '2',
+        r: 30,
+        cx: 30,
+        cy: 30
+      },
+      '.label': {
+        y: 5, fill: 'white', y: 20
       }
     }
   }, joint.shapes.devs.Model.prototype.defaults)
@@ -135,6 +176,10 @@ joint.shapes.NodeShape = joint.shapes.devs.Model.extend({
   })
   graph.addCell(root_node)
 
+  job_variables = job_script_data.variables
+  unless job_variables
+    job_variables = {}
+
   $.each job_script_data.nodes, (name, node_descriptor)->
     x = if node_descriptor.x
       node_descriptor.x
@@ -144,9 +189,22 @@ joint.shapes.NodeShape = joint.shapes.devs.Model.extend({
       node_descriptor.y
     else
       30
+
+    appendVariable = (name)->
+      unless job_variables[name]
+        job_variables[name] = {}
+
+    if node_descriptor.inputs
+      $.each node_descriptor.inputs, (index, name)->
+        appendVariable(name)
+    if node_descriptor.outputs
+      $.each node_descriptor.outputs, (index, name)->
+        appendVariable(name)
+
     node = new joint.shapes.NodeShape({
       node_type: node_descriptor.type,
       id: name,
+      graph_node_type: 'node',
       properties: {},
       position: { x: x, y: y },
       inPorts: ['in'],
@@ -178,6 +236,25 @@ joint.shapes.NodeShape = joint.shapes.devs.Model.extend({
     if node_descriptor.next_nodes
       $.each node_descriptor.next_nodes, (index, target_name)->
         createLink(name, target_name)
+
+  $.each job_variables, (name, variable_descriptor)->
+    x = if variable_descriptor.x
+      variable_descriptor.x
+    else
+      100
+    y = if variable_descriptor.y
+      variable_descriptor.y
+    else
+      30
+
+    node = new joint.shapes.VariableShape({
+      id: name,
+      position: { x: x, y: y },
+      inPorts: ['in'],
+      outPorts: [],
+      attrs: { text: { text: name } }
+    })
+    graph.addCell(node)
 
   interval = setInterval(->
     if on_updated && $paper_element.is(':visible')
