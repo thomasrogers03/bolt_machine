@@ -209,13 +209,13 @@ joint.shapes.VariableShape = joint.shapes.devs.Model.extend({
     node_out_ports = ['next_nodes']
 
     if node_descriptor.inputs
-      $.each node_descriptor.inputs, (index, name)->
-        appendVariable(name)
-        node_in_ports.push(name)
+      $.each node_descriptor.inputs, (source, variable_name)->
+        appendVariable(variable_name)
+        node_in_ports.push(source)
     if node_descriptor.outputs
-      $.each node_descriptor.outputs, (index, name)->
-        appendVariable(name)
-        node_out_ports.push(name)
+      $.each node_descriptor.outputs, (source, variable_name)->
+        appendVariable(variable_name)
+        node_out_ports.push(source)
 
     node = new joint.shapes.NodeShape({
       node_type: node_descriptor.type,
@@ -231,37 +231,13 @@ joint.shapes.VariableShape = joint.shapes.devs.Model.extend({
     node.portProp('in', 'connection_type', 'node')
     node.portProp('next_nodes', 'connection_type', 'node')
     if node_descriptor.inputs
-      $.each node_descriptor.inputs, (index, name)->
-        node.portProp(name, 'connection_type', 'variable')
+      $.each node_descriptor.inputs, (source, variable_name)->
+        node.portProp(source, 'connection_type', 'variable')
     if node_descriptor.outputs
-      $.each node_descriptor.outputs, (index, name)->
-        node.portProp(name, 'connection_type', 'variable')
+      $.each node_descriptor.outputs, (source, variable_name)->
+        node.portProp(source, 'connection_type', 'variable')
 
     graph.addCell(node)
-
-  createLink = (source, target)->
-    link = new joint.shapes.pn.Link({
-      smooth: true,
-      source: {
-        id: source,
-        port: 'next_nodes'
-      },
-      target: {
-        id: target,
-        port: 'in'
-      }
-      attrs: {
-        '.connection' : { stroke: 'black', 'stroke-width': '2' },
-        '.marker-target': { d: 'M 10 0 L 0 5 L 10 10 z', 'stroke-width': '3' }
-      }
-    });
-    graph.addCell(link)
-
-  createLink('root', job_script_data.root)
-  $.each job_script_data.nodes, (name, node_descriptor)->
-    if node_descriptor.next_nodes
-      $.each node_descriptor.next_nodes, (index, target_name)->
-        createLink(name, target_name)
 
   $.each job_variables, (name, variable_descriptor)->
     x = if variable_descriptor.x
@@ -283,6 +259,36 @@ joint.shapes.VariableShape = joint.shapes.devs.Model.extend({
     })
     node.portProp('in', 'connection_type', 'node')
     graph.addCell(node)
+
+  createLink = (source, source_port, target)->
+    link = new joint.shapes.pn.Link({
+      smooth: true,
+      source: {
+        id: source,
+        port: source_port
+      },
+      target: {
+        id: target,
+        port: 'in'
+      }
+      attrs: {
+        '.connection' : { stroke: 'black', 'stroke-width': '2' },
+        '.marker-target': { d: 'M 10 0 L 0 5 L 10 10 z', 'stroke-width': '3' }
+      }
+    });
+    graph.addCell(link)
+
+  createLink('root', 'next_nodes', job_script_data.root)
+  $.each job_script_data.nodes, (name, node_descriptor)->
+    if node_descriptor.next_nodes
+      $.each node_descriptor.next_nodes, (index, target_name)->
+        createLink(name, 'next_nodes', target_name)
+    if node_descriptor.inputs
+      $.each node_descriptor.inputs, (source, variable_name)->
+        createLink(name, source, variable_name)
+    if node_descriptor.outputs
+      $.each node_descriptor.outputs, (source, variable_name)->
+        createLink(name, source, variable_name)
 
   interval = setInterval(->
     if on_updated && $paper_element.is(':visible')
