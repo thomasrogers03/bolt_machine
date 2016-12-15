@@ -13,18 +13,29 @@ ready = ->
         $('#job-meta-data').data('job-script-json', job_script_data)
 
     node_graph_updated = (graph)->
+      unless job_script_data.variables
+        job_script_data.variables = {}
+      unless job_script_data.nodes
+        job_script_data.nodes = {}
+
       $.each graph.getElements(), (index, element)->
         node_name = element.get('id')
         graph_node_type = element.get('graph_node_type')
+        position = element.get('position')
         if graph_node_type == 'node'
           node_descriptor = job_script_data.nodes[node_name]
 
-          position = element.get('position')
           node_descriptor.x = position.x
           node_descriptor.y = position.y
           node_descriptor.next_nodes = []
           node_descriptor.inputs = {}
           node_descriptor.outputs = {}
+        else if graph_node_type == 'variable'
+          variable_descriptor = job_script_data.variables[node_name]
+          unless variable_descriptor
+            job_script_data.variables[node_name] = variable_descriptor = {}
+          variable_descriptor.x = position.x
+          variable_descriptor.y = position.y
 
       $.each graph.getLinks(), (index, link)->
         node_name = link.get('source').id
