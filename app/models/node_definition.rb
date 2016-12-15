@@ -1,4 +1,24 @@
 class NodeDefinition < ActiveRecord::Base
+
+  def self.all_node_types
+    native_nodes = BehaviourNodeGraph.constants.map do |const|
+      BehaviourNodeGraph.const_get(const)
+    end.select { |const| const.respond_to?(:new_node) }.map do |node_klass|
+      {'name' => node_klass.to_s.demodulize, 'inputs' => [], 'outputs' => [], 'properties' => {}}.merge(node_klass.as_json)
+    end
+    node_definitions = all.as_json
+    native_nodes + node_definitions
+  end
+
+  def as_json(*)
+    {
+        'name' => name,
+        'inputs' => inputs,
+        'outputs' => outputs,
+        'properties' => properties
+    }
+  end
+
   def node_klass
     @node_klass ||= begin
       eval(node_klass_script).tap do |klass|
