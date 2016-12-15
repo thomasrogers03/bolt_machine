@@ -7,7 +7,9 @@ class NodeDefinition < ActiveRecord::Base
       {'name' => node_klass.to_s.demodulize, 'inputs' => [], 'outputs' => [], 'properties' => {}}.merge(node_klass.as_json)
     end
     node_definitions = all.as_json
-    native_nodes + node_definitions
+    (native_nodes + node_definitions).inject({}) do |memo, node_descriptor|
+      memo.merge!(node_descriptor['name'] => node_descriptor)
+    end
   end
 
   def as_json(*)

@@ -1,6 +1,6 @@
 = form_for @job, url: execute_job_path, html: {id: "execute_job_#{@job.id}", class: 'execute_job', style: 'display: none;'} do
   -
-#job-meta-data.hidden{'data-job-id' => @job.id, 'data-job-script-json' => @job.job_script.job_script_as_json.to_json}
+#job-meta-data.hidden{'data-job-id' => @job.id, 'data-job-script-json' => @job.job_script.job_script_as_json.to_json, 'data-node-meta-data' => @job.node_meta_data.to_json}
 = form_for @job, html: {onsubmit: 'return false;'} do |job_form|
   %div
     = job_form.label :job_name

@@ -7,6 +7,7 @@ ready = ->
     $form = $('form.edit_job')
     job_id = $('#job-meta-data').data('job-id')
     job_script_data = $('#job-meta-data').data('job-script-json')
+    node_meta_data = $('#job-meta-data').data('node-meta-data')
     form_updated = autoSaveForm $form, 'PATCH', ->
       $.get('/jobs/' + job_id + '/script/json').success (response)->
         job_script_data = response
@@ -17,7 +18,7 @@ ready = ->
         code_mirror.setValue(response)
         $(script_box).val(response)
         form_updated()
-    node_graph = createJobNodeGraph('#job-designer', job_script_data, node_graph_updated)
+    node_graph = createJobNodeGraph('#job-designer', node_meta_data, job_script_data, node_graph_updated)
 
     script_box = document.getElementById('job_job_script_attributes_script')
     code_mirror = createCodeMirror script_box, 'yaml', ->
@@ -55,7 +56,7 @@ ready = ->
       test_result_code.refresh()
       if $('#job-designer-tab').is(':visible')
         clearJobNodeGraph('#job-designer-tab', node_graph)
-        node_graph = createJobNodeGraph('#job-designer', job_script_data, node_graph_updated)
+        node_graph = createJobNodeGraph('#job-designer', node_meta_data, job_script_data, node_graph_updated)
 
 
 $(document).ready(ready)

@@ -123,7 +123,7 @@ joint.shapes.VariableShape = joint.shapes.devs.Model.extend({
   clearInterval(node_graph.interval)
   $(designer_tab).prepend('<div id="job-designer" />')
 
-@createJobNodeGraph = (paper_element, job_script_data, on_updated)->
+@createJobNodeGraph = (paper_element, node_meta_data, job_script_data, on_updated)->
   $paper_element = $(paper_element)
   graph = new joint.dia.Graph
 
@@ -205,17 +205,16 @@ joint.shapes.VariableShape = joint.shapes.devs.Model.extend({
       unless job_variables[name]
         job_variables[name] = {}
 
-    node_in_ports = ['in']
-    node_out_ports = ['next_nodes']
+    node_definition = node_meta_data[node_descriptor.type]
+    node_in_ports = $.merge(['in'], node_definition.inputs)
+    node_out_ports = $.merge(['next_nodes'], node_definition.outputs)
 
     if node_descriptor.inputs
       $.each node_descriptor.inputs, (source, variable_name)->
         appendVariable(variable_name)
-        node_in_ports.push(source)
     if node_descriptor.outputs
       $.each node_descriptor.outputs, (source, variable_name)->
         appendVariable(variable_name)
-        node_out_ports.push(source)
 
     node = new joint.shapes.NodeShape({
       node_type: node_descriptor.type,
@@ -230,14 +229,12 @@ joint.shapes.VariableShape = joint.shapes.devs.Model.extend({
 
     node.portProp('in', 'connection_type', 'node')
     node.portProp('next_nodes', 'connection_type', 'node')
-    if node_descriptor.inputs
-      $.each node_descriptor.inputs, (source, variable_name)->
-        node.portProp(source, 'connection_type', 'variable')
-        node.portProp(source, 'variable_type', 'input')
-    if node_descriptor.outputs
-      $.each node_descriptor.outputs, (source, variable_name)->
-        node.portProp(source, 'connection_type', 'variable')
-        node.portProp(source, 'variable_type', 'output')
+    $.each node_definition.inputs, (index, source)->
+      node.portProp(source, 'connection_type', 'variable')
+      node.portProp(source, 'variable_type', 'input')
+    $.each node_definition.outputs, (index, source)->
+      node.portProp(source, 'connection_type', 'variable')
+      node.portProp(source, 'variable_type', 'output')
 
     graph.addCell(node)
 
