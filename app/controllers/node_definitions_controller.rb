@@ -14,6 +14,13 @@ class NodeDefinitionsController < ApplicationController
     render json: node_definition
   end
 
+  def node_ports
+    node_definition = NodeDefinition.find_by(name: params[:type]) || "BehaviourNodeGraph::#{params[:type]}".constantize
+    inputs = node_definition.inputs || []
+    outputs = node_definition.outputs || []
+    render json: {in_ports: %w(in) + inputs, out_ports: %w(next_nodes) + outputs}
+  end
+
   private
 
   def node_definition
