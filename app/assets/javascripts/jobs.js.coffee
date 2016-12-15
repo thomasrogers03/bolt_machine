@@ -23,17 +23,29 @@ ready = ->
           node_descriptor.x = position.x
           node_descriptor.y = position.y
           node_descriptor.next_nodes = []
+          node_descriptor.inputs = {}
+          node_descriptor.outputs = {}
 
       $.each graph.getLinks(), (index, link)->
         node_name = link.get('source').id
+        target_node_name = link.get('target').id
+
         element = graph.getCell(node_name)
         graph_node_type = element.get('graph_node_type')
-        target_node_name = link.get('target').id
-        if graph_node_type == 'node'
-          node_descriptor = job_script_data.nodes[node_name]
-          node_descriptor.next_nodes.push(target_node_name)
-        else if node_name == 'root'
+        if graph_node_type == 'root'
           job_script_data.root = target_node_name
+        else if graph_node_type == 'node'
+          target_node_type = graph.getCell(target_node_name).get('graph_node_type')
+          node_descriptor = job_script_data.nodes[node_name]
+          if target_node_type == 'node'
+            node_descriptor.next_nodes.push(target_node_name)
+          else if target_node_type == 'variable'
+            port = link.get('source').port
+            variable_type = element.portProp(port, 'variable_type')
+            if variable_type == 'input'
+              node_descriptor.inputs[port] = target_node_name
+            if variable_type == 'output'
+              node_descriptor.outputs[port] = target_node_name
 
       $.get('/jobs/json_to_yaml', {json: JSON.stringify(job_script_data)}).success (response)->
         code_mirror.setValue(response)

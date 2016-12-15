@@ -233,9 +233,11 @@ joint.shapes.VariableShape = joint.shapes.devs.Model.extend({
     if node_descriptor.inputs
       $.each node_descriptor.inputs, (source, variable_name)->
         node.portProp(source, 'connection_type', 'variable')
+        node.portProp(source, 'variable_type', 'input')
     if node_descriptor.outputs
       $.each node_descriptor.outputs, (source, variable_name)->
         node.portProp(source, 'connection_type', 'variable')
+        node.portProp(source, 'variable_type', 'output')
 
     graph.addCell(node)
 
