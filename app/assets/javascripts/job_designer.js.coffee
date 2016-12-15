@@ -147,19 +147,29 @@ joint.shapes.VariableShape = joint.shapes.devs.Model.extend({
       if cellViewS == cellViewT
         return false
 
-      if magnetS && magnetS.getAttribute('port-group') == magnetT.getAttribute('port-group')
+      target_node_type = cellViewT.model.get('graph_node_type')
+
+      port = magnetS.getAttribute('port')
+      connection_type = cellViewS.model.portProp(port, 'connection_type')
+      if connection_type != target_node_type
         return false
+
+      if target_node_type == 'node'
+        if magnetS && magnetS.getAttribute('port-group') == magnetT.getAttribute('port-group')
+          return false
+
       magnetS != magnetT
     validateMagnet: (cellView, magnet)->
-      node_name = cellView.model.get('id')
-      if node_name == 'root'
-        port = magnet.getAttribute('port')
+      node_type = cellView.model.get('graph_node_type')
+      port = magnet.getAttribute('port')
+      connection_type = cellView.model.portProp(port, 'connection_type')
+      if node_type == 'root' || connection_type == 'variable'
         links = graph.getConnectedLinks(cellView.model, { outbound: true })
         portLinks = _.filter links, (link)->
           link.get('source').port == port
         if portLinks.length > 0
           return false
-      magnet.getAttribute('magnet') != 'passive'
+      node_type != 'variable' && magnet.getAttribute('magnet') != 'passive'
 
     snapLinks: { radius: 25 },
     markAvailable: true,
@@ -169,6 +179,7 @@ joint.shapes.VariableShape = joint.shapes.devs.Model.extend({
 
   root_node = new joint.shapes.NodeShape({
     id: 'root',
+    graph_node_type: 'root',
     position: { x: 50, y: 50 },
     inPorts: [],
     outPorts: ['next_nodes'],
@@ -194,12 +205,17 @@ joint.shapes.VariableShape = joint.shapes.devs.Model.extend({
       unless job_variables[name]
         job_variables[name] = {}
 
+    node_in_ports = ['in']
+    node_out_ports = ['next_nodes']
+
     if node_descriptor.inputs
       $.each node_descriptor.inputs, (index, name)->
         appendVariable(name)
+        node_in_ports.push(name)
     if node_descriptor.outputs
       $.each node_descriptor.outputs, (index, name)->
         appendVariable(name)
+        node_out_ports.push(name)
 
     node = new joint.shapes.NodeShape({
       node_type: node_descriptor.type,
@@ -207,10 +223,20 @@ joint.shapes.VariableShape = joint.shapes.devs.Model.extend({
       graph_node_type: 'node',
       properties: {},
       position: { x: x, y: y },
-      inPorts: ['in'],
-      outPorts: ['next_nodes'],
+      inPorts: node_in_ports,
+      outPorts: node_out_ports,
       attrs: { text: { text: name } }
     })
+
+    node.portProp('in', 'connection_type', 'node')
+    node.portProp('next_nodes', 'connection_type', 'node')
+    if node_descriptor.inputs
+      $.each node_descriptor.inputs, (index, name)->
+        node.portProp(name, 'connection_type', 'variable')
+    if node_descriptor.outputs
+      $.each node_descriptor.outputs, (index, name)->
+        node.portProp(name, 'connection_type', 'variable')
+
     graph.addCell(node)
 
   createLink = (source, target)->
@@ -249,11 +275,13 @@ joint.shapes.VariableShape = joint.shapes.devs.Model.extend({
 
     node = new joint.shapes.VariableShape({
       id: name,
+      graph_node_type: 'variable',
       position: { x: x, y: y },
       inPorts: ['in'],
       outPorts: [],
       attrs: { text: { text: name } }
     })
+    node.portProp('in', 'connection_type', 'node')
     graph.addCell(node)
 
   interval = setInterval(->
