@@ -12,52 +12,7 @@ ready = ->
         job_script_data = response
         $('#job-meta-data').data('job-script-json', job_script_data)
 
-    node_graph_updated = (graph)->
-      unless job_script_data.variables
-        job_script_data.variables = {}
-      unless job_script_data.nodes
-        job_script_data.nodes = {}
-
-      $.each graph.getElements(), (index, element)->
-        node_name = element.get('id')
-        graph_node_type = element.get('graph_node_type')
-        position = element.get('position')
-        if graph_node_type == 'node'
-          node_descriptor = job_script_data.nodes[node_name]
-
-          node_descriptor.x = position.x
-          node_descriptor.y = position.y
-          node_descriptor.next_nodes = []
-          node_descriptor.inputs = {}
-          node_descriptor.outputs = {}
-        else if graph_node_type == 'variable'
-          variable_descriptor = job_script_data.variables[node_name]
-          unless variable_descriptor
-            job_script_data.variables[node_name] = variable_descriptor = {}
-          variable_descriptor.x = position.x
-          variable_descriptor.y = position.y
-
-      $.each graph.getLinks(), (index, link)->
-        node_name = link.get('source').id
-        target_node_name = link.get('target').id
-
-        element = graph.getCell(node_name)
-        graph_node_type = element.get('graph_node_type')
-        if graph_node_type == 'root'
-          job_script_data.root = target_node_name
-        else if graph_node_type == 'node'
-          target_node_type = graph.getCell(target_node_name).get('graph_node_type')
-          node_descriptor = job_script_data.nodes[node_name]
-          if target_node_type == 'node'
-            node_descriptor.next_nodes.push(target_node_name)
-          else if target_node_type == 'variable'
-            port = link.get('source').port
-            variable_type = element.portProp(port, 'variable_type')
-            if variable_type == 'input'
-              node_descriptor.inputs[port] = target_node_name
-            if variable_type == 'output'
-              node_descriptor.outputs[port] = target_node_name
-
+    node_graph_updated = (job_script_data)->
       $.get('/jobs/json_to_yaml', {json: JSON.stringify(job_script_data)}).success (response)->
         code_mirror.setValue(response)
         $(script_box).val(response)
