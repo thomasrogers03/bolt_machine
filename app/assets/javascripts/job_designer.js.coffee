@@ -123,6 +123,42 @@ joint.shapes.VariableShape = joint.shapes.devs.Model.extend({
   clearInterval(node_graph.interval)
   $(designer_tab).prepend('<div id="job-designer" />')
 
+@createJobNodeGraphNode = (graph, node_meta_data, name, node_descriptor)->
+  x = if node_descriptor.x
+    node_descriptor.x
+  else
+    100
+  y = if node_descriptor.y
+    node_descriptor.y
+  else
+    30
+
+  node_definition = node_meta_data[node_descriptor.type]
+  node_in_ports = $.merge(['in'], node_definition.inputs)
+  node_out_ports = $.merge(['next_nodes'], node_definition.outputs)
+
+  node = new joint.shapes.NodeShape({
+    node_type: node_descriptor.type,
+    id: name,
+    graph_node_type: 'node',
+    properties: {},
+    position: { x: x, y: y },
+    inPorts: node_in_ports,
+    outPorts: node_out_ports,
+    attrs: { text: { text: name } }
+  })
+
+  node.portProp('in', 'connection_type', 'node')
+  node.portProp('next_nodes', 'connection_type', 'node')
+  $.each node_definition.inputs, (index, source)->
+    node.portProp(source, 'connection_type', 'variable')
+    node.portProp(source, 'variable_type', 'input')
+  $.each node_definition.outputs, (index, source)->
+    node.portProp(source, 'connection_type', 'variable')
+    node.portProp(source, 'variable_type', 'output')
+
+  graph.addCell(node)
+
 @createJobNodeGraph = (paper_element, node_meta_data, job_script_data, on_updated)->
   $paper_element = $(paper_element)
   graph = new joint.dia.Graph
@@ -190,25 +226,11 @@ joint.shapes.VariableShape = joint.shapes.devs.Model.extend({
   job_variables = job_script_data.variables
   unless job_variables
     job_variables = {}
+  appendVariable = (name)->
+    unless job_variables[name]
+      job_variables[name] = {}
 
   $.each job_script_data.nodes, (name, node_descriptor)->
-    x = if node_descriptor.x
-      node_descriptor.x
-    else
-      100
-    y = if node_descriptor.y
-      node_descriptor.y
-    else
-      30
-
-    appendVariable = (name)->
-      unless job_variables[name]
-        job_variables[name] = {}
-
-    node_definition = node_meta_data[node_descriptor.type]
-    node_in_ports = $.merge(['in'], node_definition.inputs)
-    node_out_ports = $.merge(['next_nodes'], node_definition.outputs)
-
     if node_descriptor.inputs
       $.each node_descriptor.inputs, (source, variable_name)->
         appendVariable(variable_name)
@@ -216,27 +238,7 @@ joint.shapes.VariableShape = joint.shapes.devs.Model.extend({
       $.each node_descriptor.outputs, (source, variable_name)->
         appendVariable(variable_name)
 
-    node = new joint.shapes.NodeShape({
-      node_type: node_descriptor.type,
-      id: name,
-      graph_node_type: 'node',
-      properties: {},
-      position: { x: x, y: y },
-      inPorts: node_in_ports,
-      outPorts: node_out_ports,
-      attrs: { text: { text: name } }
-    })
-
-    node.portProp('in', 'connection_type', 'node')
-    node.portProp('next_nodes', 'connection_type', 'node')
-    $.each node_definition.inputs, (index, source)->
-      node.portProp(source, 'connection_type', 'variable')
-      node.portProp(source, 'variable_type', 'input')
-    $.each node_definition.outputs, (index, source)->
-      node.portProp(source, 'connection_type', 'variable')
-      node.portProp(source, 'variable_type', 'output')
-
-    graph.addCell(node)
+    createJobNodeGraphNode(graph, node_meta_data, name, node_descriptor)
 
   $.each job_variables, (name, variable_descriptor)->
     x = if variable_descriptor.x
