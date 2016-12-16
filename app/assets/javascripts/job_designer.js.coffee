@@ -79,6 +79,7 @@ joint.shapes.NodeShape = joint.shapes.devs.Model.extend({
 joint.shapes.VariableShape = joint.shapes.devs.Model.extend({
   markup: '<g class="rotatable"><g class="scalable"><circle class="body"/></g><text class="label"/></g>',
   portMarkup: '<rect class="port-body"/>',
+  portLabelMarkup: '',
 
   defaults: joint.util.deepSupplement({
     type: 'VariableShape'
@@ -135,7 +136,7 @@ joint.shapes.VariableShape = joint.shapes.devs.Model.extend({
 
   node_definition = node_meta_data[node_descriptor.type]
   node_in_ports = $.merge(['in'], node_definition.inputs)
-  node_out_ports = $.merge(['next_nodes'], node_definition.outputs)
+  node_out_ports = $.merge(['out'], node_definition.outputs)
 
   node = new joint.shapes.NodeShape({
     node_type: node_descriptor.type,
@@ -149,7 +150,7 @@ joint.shapes.VariableShape = joint.shapes.devs.Model.extend({
   })
 
   node.portProp('in', 'connection_type', 'node')
-  node.portProp('next_nodes', 'connection_type', 'node')
+  node.portProp('out', 'connection_type', 'node')
   $.each node_definition.inputs, (index, source)->
     node.portProp(source, 'connection_type', 'variable')
     node.portProp(source, 'variable_type', 'input')
@@ -246,7 +247,7 @@ joint.shapes.VariableShape = joint.shapes.devs.Model.extend({
     graph_node_type: 'root',
     position: { x: 50, y: 50 },
     inPorts: [],
-    outPorts: ['next_nodes'],
+    outPorts: ['out'],
     attrs: { text: { text: 'Root' } }
   })
   graph.addCell(root_node)
@@ -307,11 +308,11 @@ joint.shapes.VariableShape = joint.shapes.devs.Model.extend({
     });
     graph.addCell(link)
 
-  createLink('root', 'next_nodes', job_script_data.root)
+  createLink('root', 'out', job_script_data.root)
   $.each job_script_data.nodes, (name, node_descriptor)->
     if node_descriptor.next_nodes
       $.each node_descriptor.next_nodes, (index, target_name)->
-        createLink(name, 'next_nodes', target_name)
+        createLink(name, 'out', target_name)
     if node_descriptor.inputs
       $.each node_descriptor.inputs, (source, variable_name)->
         createLink(name, source, variable_name)
