@@ -160,7 +160,28 @@ joint.shapes.VariableShape = joint.shapes.devs.Model.extend({
 
   graph.addCell(node)
 
-@selectContextMenuItem = (event)->
+@createJobNodeGraphVariable = (graph, name, variable_descriptor)->
+  x = if variable_descriptor.x
+    variable_descriptor.x
+  else
+    100
+  y = if variable_descriptor.y
+    variable_descriptor.y
+  else
+    30
+
+  node = new joint.shapes.VariableShape({
+    id: name,
+    graph_node_type: 'variable',
+    position: { x: x, y: y },
+    inPorts: ['in'],
+    outPorts: [],
+    attrs: { text: { text: name } }
+  })
+  node.portProp('in', 'connection_type', 'node')
+  graph.addCell(node)
+
+@selectContextMenuNode = (event)->
   event.preventDefault()
   $('#job-designer-context-menu').hide()
 
@@ -171,9 +192,25 @@ joint.shapes.VariableShape = joint.shapes.devs.Model.extend({
   job_script_data = $context_menu.data('job_script_data')
   position = $context_menu.data('position')
   node_type = $context_menu_item.text()
-  name = node_type + '1'
+  name = node_type + ' ' + Object.keys(job_script_data.nodes).length
   job_script_data.nodes[name] = node_descriptor = { type: node_type, x: position.x, y: position.y }
   createJobNodeGraphNode(graph, node_meta_data, name, node_descriptor)
+  false
+
+@selectContextMenuVariable = (event)->
+  event.preventDefault()
+  $('#job-designer-context-menu').hide()
+
+  $context_menu = $('#job-designer-context-menu')
+  $context_menu_item = $(event.target)
+  graph = $context_menu.data('graph')
+  node_meta_data = $context_menu.data('node_meta_data')
+  job_script_data = $context_menu.data('job_script_data')
+  position = $context_menu.data('position')
+  node_type = $context_menu_item.text()
+  name = node_type + ' ' + Object.keys(job_script_data.variables).length
+  job_script_data.variables[name] = variable_descriptor = { x: position.x, y: position.y }
+  createJobNodeGraphVariable(graph, name, variable_descriptor)
   false
 
 @createJobNodeGraph = (paper_element, node_meta_data, job_script_data, on_updated)->
@@ -189,8 +226,8 @@ joint.shapes.VariableShape = joint.shapes.devs.Model.extend({
     defaultLink: new joint.dia.Link({
       smooth: true,
       attrs: {
-        '.connection' : { stroke: 'black' },
-        '.marker-target': { d: 'M 10 0 L 0 5 L 10 10 z' }
+        '.connection' : { stroke: 'black', 'stroke-width': '2' },
+        '.marker-target': { d: 'M 10 0 L 0 5 L 10 10 z', 'stroke-width': '3' }
       }
     }),
     validateConnection: (cellViewS, magnetS, cellViewT, magnetT, end, linkView)->
@@ -270,25 +307,7 @@ joint.shapes.VariableShape = joint.shapes.devs.Model.extend({
     createJobNodeGraphNode(graph, node_meta_data, name, node_descriptor)
 
   $.each job_variables, (name, variable_descriptor)->
-    x = if variable_descriptor.x
-      variable_descriptor.x
-    else
-      100
-    y = if variable_descriptor.y
-      variable_descriptor.y
-    else
-      30
-
-    node = new joint.shapes.VariableShape({
-      id: name,
-      graph_node_type: 'variable',
-      position: { x: x, y: y },
-      inPorts: ['in'],
-      outPorts: [],
-      attrs: { text: { text: name } }
-    })
-    node.portProp('in', 'connection_type', 'node')
-    graph.addCell(node)
+    createJobNodeGraphVariable(graph, name, variable_descriptor)
 
   createLink = (source, source_port, target)->
     link = new joint.shapes.pn.Link({

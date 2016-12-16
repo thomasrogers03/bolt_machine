@@ -19,7 +19,9 @@
         %ul
           - @job.node_meta_data.each do |name, node_definition|
             %li
-              %a{href: '#', onclick: 'return selectContextMenuItem(event);'}= name
+              %a{href: '#', onclick: 'return selectContextMenuNode(event);'}= name
+          %li
+            %a{href: '#', onclick: 'return selectContextMenuVariable(event);'} Variable
     #job-script.tab-pane.fade
       = job_form.fields_for :job_script do |script_form|
         = script_form.text_area :script
