@@ -213,6 +213,13 @@ joint.shapes.VariableShape = joint.shapes.devs.Model.extend({
     multiLinks: false
   })
 
+  paper.on 'blank:contextmenu', (event)->
+    $('#job-designer-context-menu').css({left: event.offsetX, top: event.offsetY})
+    $('#job-designer-context-menu').show()
+
+  paper.on 'blank:pointerclick', ()->
+    $('#job-designer-context-menu').hide()
+
   root_node = new joint.shapes.NodeShape({
     id: 'root',
     graph_node_type: 'root',

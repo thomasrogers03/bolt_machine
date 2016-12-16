@@ -34,3 +34,14 @@ form.edit_node_definition textarea {
 #job-designer {
   background: linear-gradient(to bottom, #258dc8 0%,#258dc8 100%);
 }
+
+#job-designer-context-menu {
+  position: absolute;
+  background-color: #31b0d5;
+  border-radius: 0.45em;
+  box-shadow: 4px 4px 5px #888888;
+  border: 3px solid #21a0c5;
+  color: #116644;
+  left: 200px;
+  top: 200px;
+}

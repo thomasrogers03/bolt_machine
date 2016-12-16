@@ -13,8 +13,13 @@
     %li
       %a.tablinks{href: '#job-test', 'data-toggle' => 'tab'} Test
   .tab-content
-    #job-designer-tab.tab-pane.fade.in.active
+    #job-designer-tab.tab-pane.fade.in.active{style: 'position: relative;'}
       #job-designer
+      #job-designer-context-menu{style: 'display: none;'}
+        %ul
+          - @job.node_meta_data.each do |name, node_definition|
+            %li
+              %a{href: '#'}= name
     #job-script.tab-pane.fade
       = job_form.fields_for :job_script do |script_form|
         = script_form.text_area :script
