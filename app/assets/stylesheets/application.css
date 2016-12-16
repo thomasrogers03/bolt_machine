@@ -18,3 +18,7 @@
 #main_content {
     padding-top: 4em;
 }
+
+.container {
+    width: 80%;
+}
