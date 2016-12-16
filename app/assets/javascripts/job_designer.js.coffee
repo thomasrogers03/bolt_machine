@@ -169,8 +169,9 @@ joint.shapes.VariableShape = joint.shapes.devs.Model.extend({
   node_meta_data = $context_menu.data('node_meta_data')
   job_script_data = $context_menu.data('job_script_data')
   position = $context_menu.data('position')
-  name = 'node1'
-  job_script_data.nodes[name] = node_descriptor = { type: $context_menu_item.text(), x: position.x, y: position.y }
+  node_type = $context_menu_item.text()
+  name = node_type + '1'
+  job_script_data.nodes[name] = node_descriptor = { type: node_type, x: position.x, y: position.y }
   createJobNodeGraphNode(graph, node_meta_data, name, node_descriptor)
   false
 
