@@ -159,6 +159,21 @@ joint.shapes.VariableShape = joint.shapes.devs.Model.extend({
 
   graph.addCell(node)
 
+@selectContextMenuItem = (event)->
+  event.preventDefault()
+  $('#job-designer-context-menu').hide()
+
+  $context_menu = $('#job-designer-context-menu')
+  $context_menu_item = $(event.target)
+  graph = $context_menu.data('graph')
+  node_meta_data = $context_menu.data('node_meta_data')
+  job_script_data = $context_menu.data('job_script_data')
+  position = $context_menu.data('position')
+  name = 'node1'
+  job_script_data.nodes[name] = node_descriptor = { type: $context_menu_item.text(), x: position.x, y: position.y }
+  createJobNodeGraphNode(graph, node_meta_data, name, node_descriptor)
+  false
+
 @createJobNodeGraph = (paper_element, node_meta_data, job_script_data, on_updated)->
   $paper_element = $(paper_element)
   graph = new joint.dia.Graph
@@ -214,8 +229,13 @@ joint.shapes.VariableShape = joint.shapes.devs.Model.extend({
   })
 
   paper.on 'blank:contextmenu', (event)->
-    $('#job-designer-context-menu').css({left: event.offsetX, top: event.offsetY})
-    $('#job-designer-context-menu').show()
+    $context_menu = $('#job-designer-context-menu')
+    $context_menu.data('graph', graph)
+    $context_menu.data('node_meta_data', node_meta_data)
+    $context_menu.data('job_script_data', job_script_data)
+    $context_menu.data('position', {x: event.offsetX, y: event.offsetY})
+    $context_menu.css({left: event.offsetX, top: event.offsetY})
+    $context_menu.show()
 
   paper.on 'blank:pointerclick', ()->
     $('#job-designer-context-menu').hide()
@@ -330,20 +350,21 @@ joint.shapes.VariableShape = joint.shapes.devs.Model.extend({
 
         element = graph.getCell(node_name)
         graph_node_type = element.get('graph_node_type')
-        if graph_node_type == 'root'
-          job_script_data.root = target_node_name
-        else if graph_node_type == 'node'
-          target_node_type = graph.getCell(target_node_name).get('graph_node_type')
-          node_descriptor = job_script_data.nodes[node_name]
-          if target_node_type == 'node'
-            node_descriptor.next_nodes.push(target_node_name)
-          else if target_node_type == 'variable'
-            port = link.get('source').port
-            variable_type = element.portProp(port, 'variable_type')
-            if variable_type == 'input'
-              node_descriptor.inputs[port] = target_node_name
-            if variable_type == 'output'
-              node_descriptor.outputs[port] = target_node_name
+        if target_node_name
+          if graph_node_type == 'root'
+            job_script_data.root = target_node_name
+          else if graph_node_type == 'node'
+            target_node_type = graph.getCell(target_node_name).get('graph_node_type')
+            node_descriptor = job_script_data.nodes[node_name]
+            if target_node_type == 'node'
+              node_descriptor.next_nodes.push(target_node_name)
+            else if target_node_type == 'variable'
+              port = link.get('source').port
+              variable_type = element.portProp(port, 'variable_type')
+              if variable_type == 'input'
+                node_descriptor.inputs[port] = target_node_name
+              if variable_type == 'output'
+                node_descriptor.outputs[port] = target_node_name
 
       on_updated(job_script_data)
   1500)
