@@ -44,7 +44,7 @@ gem 'lru_redux', require: false
 gem 'snappy'
 
 gem 'thomas_utils', github: 'thomasrogers03/thomas_utils'
-#gem 'behaviour_node_graph', github: 'thomasrogers03/behaviour_node_graph'
-gemspec(path: '../behaviour_node_graph')
+gem 'behaviour_node_graph', github: 'thomasrogers03/behaviour_node_graph'
+#gemspec(path: '../behaviour_node_graph')
 
 require 'open-uri'
