@@ -192,6 +192,7 @@ joint.shapes.VariableShape = joint.shapes.devs.Model.extend({
   job_script_data = $context_menu.data('job_script_data')
   position = $context_menu.data('position')
   node_type = $context_menu_item.text()
+
   name = node_type + ' ' + Object.keys(job_script_data.nodes).length
   job_script_data.nodes[name] = node_descriptor = { type: node_type, x: position.x, y: position.y }
   createJobNodeGraphNode(graph, node_meta_data, name, node_descriptor)
@@ -208,6 +209,7 @@ joint.shapes.VariableShape = joint.shapes.devs.Model.extend({
   job_script_data = $context_menu.data('job_script_data')
   position = $context_menu.data('position')
   node_type = $context_menu_item.text()
+
   name = node_type + ' ' + Object.keys(job_script_data.variables).length
   job_script_data.variables[name] = variable_descriptor = { x: position.x, y: position.y }
   createJobNodeGraphVariable(graph, name, variable_descriptor)
@@ -287,6 +289,8 @@ joint.shapes.VariableShape = joint.shapes.devs.Model.extend({
     outPorts: ['out'],
     attrs: { text: { text: 'Root' } }
   })
+  root_node.portProp('out', 'connection_type', 'node')
+
   graph.addCell(root_node)
 
   job_variables = job_script_data.variables
@@ -295,6 +299,9 @@ joint.shapes.VariableShape = joint.shapes.devs.Model.extend({
   appendVariable = (name)->
     unless job_variables[name]
       job_variables[name] = {}
+
+  unless job_script_data.nodes
+    job_script_data.nodes = {}
 
   $.each job_script_data.nodes, (name, node_descriptor)->
     if node_descriptor.inputs

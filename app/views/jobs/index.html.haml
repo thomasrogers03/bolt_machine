@@ -1,3 +1,7 @@
+= form_for @new_job do |form|
+  = form.label 'New Job'
+  = form.text_field :job_name
+  = form.submit
 %table.table.table-striped.table-bordered
   %thead
     %tr

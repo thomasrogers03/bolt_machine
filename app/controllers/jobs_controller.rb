@@ -3,10 +3,16 @@ class JobsController < ApplicationController
 
   def index
     @jobs = Job.all
+    @new_job = Job.new
   end
 
   def edit
     job
+  end
+
+  def create
+    job = Job.create!(create_job_params.merge(job_script_attributes: {script: "---\n"}))
+    redirect_to edit_job_path(job)
   end
 
   def update
@@ -46,6 +52,10 @@ class JobsController < ApplicationController
 
   def job
     @job ||= Job.find(params[:id])
+  end
+
+  def create_job_params
+    @create_job_params ||= params.require(:job).permit(:job_name)
   end
 
   def update_params
