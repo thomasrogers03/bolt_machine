@@ -22,6 +22,7 @@ ActiveRecord::Schema.define(version: 20161210223417) do
 
   create_table "jobs", force: true do |t|
     t.string   "cron"
+    t.boolean  "enabled"
     t.string   "job_name"
     t.datetime "created_at"
     t.datetime "updated_at"
