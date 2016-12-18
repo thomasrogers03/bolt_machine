@@ -18,7 +18,28 @@ ready = ->
         code_mirror.setValue(response)
         $(script_box).val(response)
         form_updated()
-    node_graph = createJobNodeGraph('#job-designer', node_meta_data, job_script_data, node_graph_updated)
+
+    property_change = (properties, type, name)->
+      ->
+        value = $(this).val()
+        if type == 'any'
+          float_value = parseFloat(value)
+          unless isNaN(float_value)
+            value = float_value
+        properties[name] = value
+    node_selected = (node_definition, node_descriptor, node)->
+      $('#node-property-table').html('')
+      if node
+        property_table = $('#node-property-table')
+        property_templated = _.template($('#node-property-template').html())
+        $.each node_definition.properties, (name, type)->
+          property_html = property_templated(name: name, type: type)
+          property_table.append(property_html)
+          input = property_table.find('.property-input:last')
+          input.val(node_descriptor.properties[name])
+          input.on('change keyup paste mouseup', property_change(node_descriptor.properties, type, name))
+
+    node_graph = createJobNodeGraph('#job-designer', node_meta_data, job_script_data, node_graph_updated, node_selected)
 
     script_box = document.getElementById('job_job_script_attributes_script')
     code_mirror = createCodeMirror script_box, 'yaml', ->
@@ -56,7 +77,7 @@ ready = ->
       test_result_code.refresh()
       if $('#job-designer-tab').is(':visible')
         clearJobNodeGraph('#job-designer-tab', node_graph)
-        node_graph = createJobNodeGraph('#job-designer', node_meta_data, job_script_data, node_graph_updated)
+        node_graph = createJobNodeGraph('#job-designer', node_meta_data, job_script_data, node_graph_updated, node_selected)
 
 
 $(document).ready(ready)

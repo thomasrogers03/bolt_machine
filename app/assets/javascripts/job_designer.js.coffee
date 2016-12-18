@@ -134,6 +134,9 @@ joint.shapes.VariableShape = joint.shapes.devs.Model.extend({
   else
     30
 
+  unless node_descriptor.properties
+    node_descriptor.properties = {}
+
   node_definition = node_meta_data[node_descriptor.type]
   node_in_ports = $.merge(['in'], node_definition.inputs)
   node_out_ports = $.merge(['out'], node_definition.outputs)
@@ -222,7 +225,7 @@ joint.shapes.VariableShape = joint.shapes.devs.Model.extend({
   paper = new joint.dia.Paper({
     el: $paper_element,
     width: '100%',
-    height: 800,
+    height: 600,
     model: graph,
     gridSize: 1,
     defaultLink: new joint.dia.Link({
@@ -274,6 +277,8 @@ joint.shapes.VariableShape = joint.shapes.devs.Model.extend({
     if selected_node
       selected_node.unhighlight()
       selected_node = null
+      if on_node_selected
+        on_node_selected(null, null, null)
   paper.on 'cell:pointerclick', (cell_view, evt, x, y)->
     node = cell_view.model
     node_type = node.get('graph_node_type')
@@ -283,7 +288,9 @@ joint.shapes.VariableShape = joint.shapes.devs.Model.extend({
       cell_view.highlight()
       selected_node = cell_view
       if on_node_selected
-        on_node_selected(node)
+        node_descriptor = job_script_data.nodes[node.id]
+        node_definition = node_meta_data[node_descriptor.type]
+        on_node_selected(node_definition, node_descriptor, node)
 
   paper.on 'blank:contextmenu', (event)->
     $context_menu = $('#job-designer-context-menu')

@@ -1,3 +1,23 @@
+%script#node-property-template{type: 'template'}
+  %tr
+    %td.property-name
+      %label
+        <%= name %>
+    %td.property-value
+      <% if(type === 'any') { %>
+      %input.property-input
+      <% } else if (type === 'int') { %>
+      %input.property-input{type: 'number'}
+      <% } else if (typeof(type) !== 'string') { %>
+      %select.property-input
+        <% $.each(type, function(index, value){ %>
+        %option{value: '<%= value %>'.html_safe}
+          <%= value %>
+        <% }) %>
+      <% } else { %>
+      %label
+        Type not supported...
+      <% } %>
 = form_for @job, url: execute_job_path, html: {id: "execute_job_#{@job.id}", class: 'execute_job', style: 'display: none;'} do
   -
 #job-meta-data.hidden{'data-job-id' => @job.id, 'data-job-script-json' => @job.job_script.job_script_as_json.to_json, 'data-node-meta-data' => @job.node_meta_data.to_json}
@@ -15,6 +35,7 @@
   .tab-content
     #job-designer-tab.tab-pane.fade.in.active{style: 'position: relative;'}
       #job-designer
+      #node-property-table
       #job-designer-context-menu{style: 'display: none;'}
         %ul
           - @job.node_meta_data.each do |name, node_definition|
