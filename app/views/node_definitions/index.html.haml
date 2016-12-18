@@ -1,3 +1,7 @@
+= form_for @new_node_definition do |form|
+  = form.label 'New Node Definition'
+  = form.text_field :name
+  = form.submit
 %table.table.table-striped.table-bordered
   %thead
     %tr

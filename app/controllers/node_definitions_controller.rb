@@ -3,10 +3,16 @@ class NodeDefinitionsController < ApplicationController
 
   def index
     @node_definitions = NodeDefinition.all
+    @new_node_definition = NodeDefinition.new
   end
 
   def edit
     node_definition
+  end
+
+  def create
+    node_definition = NodeDefinition.create!(create_node_params.merge(meta_data: "---\n"))
+    redirect_to edit_node_definition_path(node_definition)
   end
 
   def update
@@ -25,6 +31,10 @@ class NodeDefinitionsController < ApplicationController
 
   def node_definition
     @node_definition ||= NodeDefinition.find(params[:id])
+  end
+
+  def create_node_params
+    @create_node_params ||= params.require(:node_definition).permit(:name)
   end
 
   def update_params
