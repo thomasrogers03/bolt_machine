@@ -14,7 +14,6 @@
   form_updated = ->
     path = $form.attr('action')
     $.ajax({url: path, type: method, data: $form.serialize()}).success (response)->
-      console.log(response)
       if callback
         callback()
     false
