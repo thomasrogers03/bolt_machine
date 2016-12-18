@@ -215,7 +215,7 @@ joint.shapes.VariableShape = joint.shapes.devs.Model.extend({
   createJobNodeGraphVariable(graph, name, variable_descriptor)
   false
 
-@createJobNodeGraph = (paper_element, node_meta_data, job_script_data, on_updated)->
+@createJobNodeGraph = (paper_element, node_meta_data, job_script_data, on_updated, on_node_selected)->
   $paper_element = $(paper_element)
   graph = new joint.dia.Graph
 
@@ -268,6 +268,22 @@ joint.shapes.VariableShape = joint.shapes.devs.Model.extend({
     linkPinning: false,
     multiLinks: false
   })
+
+  selected_node = null
+  paper.on 'blank:pointerclick', ()->
+    if selected_node
+      selected_node.unhighlight()
+      selected_node = null
+  paper.on 'cell:pointerclick', (cell_view, evt, x, y)->
+    node = cell_view.model
+    node_type = node.get('graph_node_type')
+    if node_type == 'node'
+      if selected_node
+        selected_node.unhighlight()
+      cell_view.highlight()
+      selected_node = cell_view
+      if on_node_selected
+        on_node_selected(node)
 
   paper.on 'blank:contextmenu', (event)->
     $context_menu = $('#job-designer-context-menu')
