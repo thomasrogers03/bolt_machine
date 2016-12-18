@@ -11,4 +11,7 @@
         %td
           = link_to job.job_name, edit_job_path(job)
         %td
-          = job.cron.presence || 'Run Manually'
+          = form_for job do |form|
+            = form.text_field :cron, placeholder: 'Run Manually'
+            = form.submit 'Update'
+
