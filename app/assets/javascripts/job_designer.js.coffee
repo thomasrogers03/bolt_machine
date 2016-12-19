@@ -139,7 +139,7 @@ joint.shapes.VariableShape = joint.shapes.devs.Model.extend({
 
   node_definition = node_meta_data[node_descriptor.type]
   node_in_ports = $.merge(['in'], node_definition.inputs)
-  node_out_ports = $.merge(['out'], node_definition.outputs)
+  node_out_ports = $.merge($.merge(['out'], node_definition.output_nodes), node_definition.outputs)
 
   node = new joint.shapes.NodeShape({
     node_type: node_descriptor.type,
@@ -368,6 +368,11 @@ joint.shapes.VariableShape = joint.shapes.devs.Model.extend({
     if node_descriptor.outputs
       $.each node_descriptor.outputs, (source, variable_name)->
         createLink(name, source, variable_name)
+    if node_descriptor.output_nodes
+      $.each node_descriptor.output_nodes, (source, targets)->
+        if targets
+          $.each targets, (index, target_name)->
+            createLink(name, source, target_name)
 
   interval = setInterval(->
     if on_updated && $paper_element.is(':visible')
@@ -386,6 +391,7 @@ joint.shapes.VariableShape = joint.shapes.devs.Model.extend({
           node_descriptor.x = position.x
           node_descriptor.y = position.y
           node_descriptor.next_nodes = []
+          node_descriptor.output_nodes = {}
           node_descriptor.inputs = {}
           node_descriptor.outputs = {}
         else if graph_node_type == 'variable'
@@ -405,12 +411,17 @@ joint.shapes.VariableShape = joint.shapes.devs.Model.extend({
           if graph_node_type == 'root'
             job_script_data.root = target_node_name
           else if graph_node_type == 'node'
+            port = link.get('source').port
             target_node_type = graph.getCell(target_node_name).get('graph_node_type')
             node_descriptor = job_script_data.nodes[node_name]
             if target_node_type == 'node'
-              node_descriptor.next_nodes.push(target_node_name)
+              if port == 'out'
+                node_descriptor.next_nodes.push(target_node_name)
+              else
+                unless node_descriptor.output_nodes[port]
+                  node_descriptor.output_nodes[port] = []
+                node_descriptor.output_nodes[port].push(target_node_name)
             else if target_node_type == 'variable'
-              port = link.get('source').port
               variable_type = element.portProp(port, 'variable_type')
               if variable_type == 'input'
                 node_descriptor.inputs[port] = target_node_name
