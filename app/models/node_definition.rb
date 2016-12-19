@@ -17,6 +17,7 @@ class NodeDefinition < ActiveRecord::Base
         'name' => name,
         'inputs' => inputs,
         'outputs' => outputs,
+        'output_nodes' => output_nodes,
         'properties' => properties
     }
   end
@@ -26,7 +27,7 @@ class NodeDefinition < ActiveRecord::Base
       eval(node_klass_script).tap do |klass|
         klass.inputs = inputs
         klass.outputs = outputs
-        klass.output_nodes = []
+        klass.output_nodes = output_nodes
         klass.properties = properties
       end
     end
@@ -39,7 +40,7 @@ end}
   end
 
   def node_klass_params
-    @node_klass_params ||= (inputs + outputs + properties.keys).map { |key| ":#{key}" } * ', '
+    @node_klass_params ||= (inputs + outputs + output_nodes + properties.keys).map { |key| ":#{key}" } * ', '
   end
 
   def inputs
@@ -48,6 +49,10 @@ end}
 
   def outputs
     @outputs ||= (variable_meta_data['outputs'] || []).map(&:to_sym)
+  end
+
+  def output_nodes
+    @output_nodes ||= (variable_meta_data['output_nodes'] || []).map(&:to_sym)
   end
 
   def properties
