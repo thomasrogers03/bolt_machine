@@ -17,9 +17,10 @@ class JobsController < ApplicationController
 
   def update
     job.update!(update_params)
-    respond_to do |format|
-      format.html { redirect_to jobs_path }
-      format.json { render json: job }
+    if params[:designer]
+      render json: job
+    else
+      redirect_to jobs_path
     end
   end
 

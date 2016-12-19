@@ -22,6 +22,7 @@
   -
 #job-meta-data.hidden{'data-job-id' => @job.id, 'data-job-script-json' => @job.job_script.job_script_as_json.to_json, 'data-node-meta-data' => @job.node_meta_data.to_json}
 = form_for @job, html: {onsubmit: 'return false;'} do |job_form|
+  %input.hidden{name: 'designer', value: ''}
   %div
     = job_form.label :job_name
     = job_form.text_field :job_name
