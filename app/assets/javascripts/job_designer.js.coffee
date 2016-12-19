@@ -160,6 +160,8 @@ joint.shapes.VariableShape = joint.shapes.devs.Model.extend({
   $.each node_definition.outputs, (index, source)->
     node.portProp(source, 'connection_type', 'variable')
     node.portProp(source, 'variable_type', 'output')
+  $.each node_definition.output_nodes, (index, source)->
+    node.portProp(source, 'connection_type', 'node')
 
   graph.addCell(node)
 
