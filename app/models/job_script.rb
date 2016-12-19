@@ -44,9 +44,11 @@ class JobScript < ActiveRecord::Base
     input_values = node_klass.inputs.map { |name| definition['inputs'][name.to_s] }
     output_values = node_klass.outputs.map { |name| definition['outputs'][name.to_s] }
     output_node_values = node_klass.output_nodes.map do |name|
-      node_name = definition['output_nodes'][name.to_s]
-      node_definition = nodes[node_name]
-      build_node(node_name, node_definition, existing_nodes).value
+      output_node_names = definition['output_nodes'][name.to_s]
+      output_node_names.map do |node_name|
+        node_definition = nodes[node_name]
+        build_node(node_name, node_definition, existing_nodes).value
+      end
     end
     property_values = node_klass.properties.map { |name, _| definition['properties'][name.to_s] }
 
