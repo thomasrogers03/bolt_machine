@@ -14,7 +14,7 @@ ready = ->
         $('#job-meta-data').data('job-script-json', job_script_data)
 
     node_graph_updated = (job_script_data)->
-      $.get('/jobs/json_to_yaml', {json: JSON.stringify(job_script_data)}).success (response)->
+      $.post('/jobs/json_to_yaml', {json: JSON.stringify(job_script_data)}).success (response)->
         code_mirror.setValue(response)
         $(script_box).val(response)
         form_updated()
