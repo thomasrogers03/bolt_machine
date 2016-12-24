@@ -152,16 +152,17 @@ joint.shapes.VariableShape = joint.shapes.devs.Model.extend({
     attrs: { text: { text: name } }
   })
 
-  node.portProp('in', 'connection_type', 'node')
-  node.portProp('out', 'connection_type', 'node')
+  node.portProp('in', 'target_connection_type', 'node')
+  node.portProp('out', 'source_connection_type', 'node')
   $.each node_definition.inputs, (index, source)->
-    node.portProp(source, 'connection_type', 'variable')
+    node.portProp(source, 'source_connection_type', 'variable')
     node.portProp(source, 'variable_type', 'input')
   $.each node_definition.outputs, (index, source)->
-    node.portProp(source, 'connection_type', 'variable')
+    node.portProp(source, 'source_connection_type', 'variable')
+    node.portProp(source, 'target_connection_type', 'variable')
     node.portProp(source, 'variable_type', 'output')
   $.each node_definition.output_nodes, (index, source)->
-    node.portProp(source, 'connection_type', 'node')
+    node.portProp(source, 'source_connection_type', 'node')
 
   graph.addCell(node)
 
@@ -183,7 +184,7 @@ joint.shapes.VariableShape = joint.shapes.devs.Model.extend({
     outPorts: [],
     attrs: { text: { text: name } }
   })
-  node.portProp('in', 'connection_type', 'node')
+  node.portProp('in', 'target_connection_type', 'variable')
   graph.addCell(node)
 
 @selectContextMenuNode = (event)->
@@ -244,14 +245,26 @@ joint.shapes.VariableShape = joint.shapes.devs.Model.extend({
       if cellViewS == cellViewT
         return false
 
-      target_node_type = cellViewT.model.get('graph_node_type')
-
-      port = magnetS.getAttribute('port')
-      connection_type = cellViewS.model.portProp(port, 'connection_type')
-      if connection_type != target_node_type
+      source_port = magnetS.getAttribute('port')
+      source_connection_type = cellViewS.model.portProp(source_port, 'source_connection_type')
+      unless source_connection_type
         return false
 
-      if target_node_type == 'node'
+      target_port = magnetT.getAttribute('port')
+      target_connection_type = cellViewT.model.portProp(target_port, 'target_connection_type')
+      unless target_connection_type
+        return false
+
+      if source_connection_type != target_connection_type
+        return false
+
+      if target_connection_type == 'variable'
+        source_variable_type = cellViewS.model.portProp(source_port, 'variable_type')
+        target_variable_type = cellViewT.model.portProp(target_port, 'variable_type')
+        if source_variable_type == target_variable_type
+          return false
+
+      if target_connection_type == 'node' #target_connection_type == 'variable'
         if magnetS && magnetS.getAttribute('port-group') == magnetT.getAttribute('port-group')
           return false
 
@@ -259,7 +272,7 @@ joint.shapes.VariableShape = joint.shapes.devs.Model.extend({
     validateMagnet: (cellView, magnet)->
       node_type = cellView.model.get('graph_node_type')
       port = magnet.getAttribute('port')
-      connection_type = cellView.model.portProp(port, 'connection_type')
+      connection_type = cellView.model.portProp(port, 'source_connection_type')
       if node_type == 'root' || connection_type == 'variable'
         links = graph.getConnectedLinks(cellView.model, { outbound: true })
         portLinks = _.filter links, (link)->
@@ -314,7 +327,7 @@ joint.shapes.VariableShape = joint.shapes.devs.Model.extend({
     outPorts: ['out'],
     attrs: { text: { text: 'Root' } }
   })
-  root_node.portProp('out', 'connection_type', 'node')
+  root_node.portProp('out', 'source_connection_type', 'node')
 
   graph.addCell(root_node)
 
@@ -331,7 +344,8 @@ joint.shapes.VariableShape = joint.shapes.devs.Model.extend({
   $.each job_script_data.nodes, (name, node_descriptor)->
     if node_descriptor.inputs
       $.each node_descriptor.inputs, (source, variable_name)->
-        appendVariable(variable_name)
+        if typeof(variable_name) is 'string'
+          appendVariable(variable_name)
     if node_descriptor.outputs
       $.each node_descriptor.outputs, (source, variable_name)->
         appendVariable(variable_name)
@@ -341,7 +355,10 @@ joint.shapes.VariableShape = joint.shapes.devs.Model.extend({
   $.each job_variables, (name, variable_descriptor)->
     createJobNodeGraphVariable(graph, name, variable_descriptor)
 
-  createLink = (source, source_port, target)->
+  createLink = (source, source_port, target, target_port)->
+    unless target_port
+      target_port = 'in'
+
     link = new joint.shapes.pn.Link({
       smooth: true,
       source: {
@@ -350,7 +367,7 @@ joint.shapes.VariableShape = joint.shapes.devs.Model.extend({
       },
       target: {
         id: target,
-        port: 'in'
+        port: target_port
       }
       attrs: {
         '.connection' : { stroke: 'black', 'stroke-width': '2' },
@@ -366,7 +383,10 @@ joint.shapes.VariableShape = joint.shapes.devs.Model.extend({
         createLink(name, 'out', target_name)
     if node_descriptor.inputs
       $.each node_descriptor.inputs, (source, variable_name)->
-        createLink(name, source, variable_name)
+        if typeof(variable_name) is 'string'
+          createLink(name, source, variable_name)
+        else
+          createLink(name, source, variable_name.node, variable_name.output)
     if node_descriptor.outputs
       $.each node_descriptor.outputs, (source, variable_name)->
         createLink(name, source, variable_name)
@@ -414,17 +434,21 @@ joint.shapes.VariableShape = joint.shapes.devs.Model.extend({
             job_script_data.root = target_node_name
           else if graph_node_type == 'node'
             port = link.get('source').port
+            variable_type = element.portProp(port, 'variable_type')
             target_node_type = graph.getCell(target_node_name).get('graph_node_type')
             node_descriptor = job_script_data.nodes[node_name]
             if target_node_type == 'node'
-              if port == 'out'
-                node_descriptor.next_nodes.push(target_node_name)
+              if variable_type
+                target_port = link.get('target').port
+                node_descriptor.inputs[port] = { node: target_node_name, output: target_port }
               else
-                unless node_descriptor.output_nodes[port]
-                  node_descriptor.output_nodes[port] = []
-                node_descriptor.output_nodes[port].push(target_node_name)
+                if port == 'out'
+                  node_descriptor.next_nodes.push(target_node_name)
+                else
+                  unless node_descriptor.output_nodes[port]
+                    node_descriptor.output_nodes[port] = []
+                  node_descriptor.output_nodes[port].push(target_node_name)
             else if target_node_type == 'variable'
-              variable_type = element.portProp(port, 'variable_type')
               if variable_type == 'input'
                 node_descriptor.inputs[port] = target_node_name
               if variable_type == 'output'
