@@ -37,13 +37,17 @@
     #job-designer-tab.tab-pane.fade.in.active{style: 'position: relative;'}
       #job-designer
       #node-property-table
-      #job-designer-context-menu{style: 'display: none;'}
+      #job-designer-context-menu.context-menu{style: 'display: none;'}
         %ul
-          - @job.node_meta_data.each do |name, node_definition|
+          - @job.node_meta_data.each do |name, _|
             %li
               %a{href: '#', onclick: 'return selectContextMenuNode(event);'}= name
           %li
             %a{href: '#', onclick: 'return selectContextMenuVariable(event);'} Variable
+      #job-designer-node-context-menu.context-menu{style: 'display: none;'}
+        %ul
+          %li
+            %a{href: '#', onclick: 'return deleteJobGraphNode(event);'} Delete Node
     #job-script.tab-pane.fade
       = job_form.fields_for :job_script do |script_form|
         = script_form.text_area :script

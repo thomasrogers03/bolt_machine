@@ -221,6 +221,10 @@ joint.shapes.VariableShape = joint.shapes.devs.Model.extend({
   createJobNodeGraphVariable(graph, name, variable_descriptor)
   false
 
+@deleteJobGraphNode = (event)->
+  $('#job-designer-node-context-menu').hide()
+  false
+
 @createJobNodeGraph = (paper_element, node_meta_data, job_script_data, on_updated, on_node_selected)->
   $paper_element = $(paper_element)
   graph = new joint.dia.Graph
@@ -295,6 +299,7 @@ joint.shapes.VariableShape = joint.shapes.devs.Model.extend({
       if on_node_selected
         on_node_selected(null, null, null)
   paper.on 'cell:pointerclick', (cell_view, evt, x, y)->
+    $('#job-designer-node-context-menu').hide()
     node = cell_view.model
     node_type = node.get('graph_node_type')
     if node_type == 'node'
@@ -307,17 +312,26 @@ joint.shapes.VariableShape = joint.shapes.devs.Model.extend({
         node_definition = node_meta_data[node_descriptor.type]
         on_node_selected(node_definition, node_descriptor, node)
 
-  paper.on 'blank:contextmenu', (event)->
-    $context_menu = $('#job-designer-context-menu')
-    $context_menu.data('graph', graph)
-    $context_menu.data('node_meta_data', node_meta_data)
-    $context_menu.data('job_script_data', job_script_data)
-    $context_menu.data('position', {x: event.offsetX, y: event.offsetY})
-    $context_menu.css({left: event.offsetX, top: event.offsetY})
-    $context_menu.show()
+  openContextMenu = (x, y, menu, node)->
+    menu.data('graph', graph)
+    menu.data('node', node)
+    menu.data('node_meta_data', node_meta_data)
+    menu.data('job_script_data', job_script_data)
+    menu.data('position', {x: x, y: y})
+    menu.css({left: x, top: y})
+    menu.show()
+
+  paper.on 'cell:contextmenu', (cellView, event, x, y)->
+    $('#job-designer-context-menu').hide()
+    openContextMenu(x, y, $('#job-designer-node-context-menu'))
+
+  paper.on 'blank:contextmenu', (event, x, y)->
+    $('#job-designer-node-context-menu').hide()
+    openContextMenu(x, y, $('#job-designer-context-menu'))
 
   paper.on 'blank:pointerclick', ()->
     $('#job-designer-context-menu').hide()
+    $('#job-designer-node-context-menu').hide()
 
   root_node = new joint.shapes.NodeShape({
     id: 'root',
